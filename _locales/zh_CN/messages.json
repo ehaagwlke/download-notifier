@@ -1,0 +1,56 @@
+{
+   "aHarmfulFileAlert": {
+      "message": "正在下载的文件可能会损害您的电脑。\n前往下载页检查并确认？"
+   },
+   "author": {
+      "message": "Dingbao.ai[a.k.a ehaagwlke]"
+   },
+   "description": {
+      "message": "下载完成后，显示桌面提醒"
+   },
+   "extName": {
+      "message": "下载提醒"
+   },
+   "nDefaultFolderButtonTitle": {
+      "message": "打开下载文件夹"
+   },
+   "nDownFinished": {
+      "message": "文件下载完成"
+   },
+   "nDownIdNotFound": {
+      "message": "抱歉，文件可能已被删除"
+   },
+   "nFileNotFound": {
+      "message": "抱歉，该文档不存在或已被删除"
+   },
+   "nOpenFileTitle": {
+      "message": "打开文件"
+   },
+   "nOpenFolderTitle": {
+      "message": "在资源管理器中显示"
+   },
+   "nOpenFolderTitleWin": {
+      "message": "在资源管理器中显示"
+   },
+   "version": {
+      "message": "0.0.5"
+   },
+   "oSoundLabel":{
+      "message": "下载完成后播放提示音"
+   },
+   "settings": {
+      "message": "设置"
+   },
+   "oDownloadShelfLabel": {
+      "message": "显示谷歌浏览器的默认下载工具条"
+   },
+   "oVolLabel": {
+      "message": "音量"
+   },
+   "oTrackLabel":{
+      "message": "提示音"
+   },
+   "oVolNotes": {
+      "message": "提示音量大小受系统音量设置影响"
+   }
+}

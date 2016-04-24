@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Options</title>
+    <link rel="stylesheet" href="/style/options.css" />
+</head>
+<body>
+    <p>
+        <input type="checkbox" name="soundAlert" id="soundAlert"> <label for="soundAlert" id="soundAlertLabel"></label>
+    </p>
+
+    <div id="sounds">
+
+        <span id="trackLabel"></span>: <select name="alertSound" id="alertSound">
+            <option value=0>Elevator Ding</option>
+            <option value=1>Air Plane Ding</option>
+            <option value=2>Pop Clip In</option>
+            <option value=3>Ship Bell</option>
+            <option value=4>Store Door Chime</option>
+            <option value=5>Temple Bell</option>
+        </select>
+        
+        <img src="/img/play.png" alt="play sound" class="mediaControl" id="mediaControl" />
+
+        <p>
+            <span id="volLabel"></span>: 
+            <input type="range" name="volumeOfSound" id="volumeOfSound" min="0.00" max="1.00" step="0.01" value="" />
+            <span id="volValue"></span>
+            <br />
+            <span id="volNotes"></span>
+        </p>
+
+    </div>
+
+    <p>
+        <input type="checkbox" name="showDownloadShelf" id="showDownloadShelf"> <label for="showDownloadShelf" id="showDownloadShelfLabel"></label>
+    </p>
+</body>
+</html>
+<script src="/js/consts.js"></script>
+<script src="/js/options.js"></script>

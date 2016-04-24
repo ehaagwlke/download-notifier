@@ -1,0 +1,56 @@
+{
+   "aHarmfulFileAlert": {
+      "message": "The file is considered harmful to your system.\nGo to Download page and check?"
+   },
+   "author": {
+      "message": "dingbao.ai[a.k.a ehaagwlke]"
+   },
+   "description": {
+      "message": "You get a desktop notification while your downloading finished."
+   },
+   "extName": {
+      "message": "Download Notifier"
+   },
+   "nDefaultFolderButtonTitle": {
+      "message": "Open default download folder"
+   },
+   "nDownFinished": {
+      "message": "Download Finished!"
+   },
+   "nDownIdNotFound": {
+      "message": "Sorry, the file might be deleted."
+   },
+   "nFileNotFound": {
+      "message": "Sorry, file not found."
+   },
+   "nOpenFileTitle": {
+      "message": "Open File"
+   },
+   "nOpenFolderTitle": {
+      "message": "Reveal in Finder"
+   },
+   "nOpenFolderTitleWin": {
+      "message": "Show in Explorer"
+   },
+   "version": {
+      "message": "0.0.5"
+   },
+   "oSoundLabel":{
+      "message": "Play a sound when download finished"
+   },
+   "settings": {
+      "message": "Settings"
+   },
+   "oDownloadShelfLabel": {
+      "message": "Show Chrome's default download shelf"
+   },
+   "oVolLabel": {
+      "message": "Volume"
+   },
+   "oTrackLabel":{
+      "message": "Track"
+   },
+   "oVolNotes": {
+      "message": "Volume here will be affected by system volume settings."
+   }
+}

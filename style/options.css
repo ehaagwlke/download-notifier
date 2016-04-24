@@ -1,0 +1,53 @@
+body {
+    font-size: 14px;
+    -webkit-user-select: none;
+}
+
+.wrapper {
+    width: 600px;
+    margin: 2em auto;
+    background-color: #EFEFEF;
+    padding: 5px;
+}
+
+.header {
+    line-height: 64px;
+    height: 64px;
+    padding: 0;
+    position: relative;
+}
+
+#extName {
+    font-size: 22px;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+
+hr {
+    border: 1px solid #999;
+}
+
+#sounds {
+    text-indent: 2em;
+    margin-top: .5em;
+    display: none;
+}
+
+.mediaControl {
+    width: 24px;
+    height: 24px;
+    border-radius: 100px;
+    border: 1px solid #999;
+    vertical-align: middle;
+}
+
+#volumeOfSound {
+    vertical-align: middle;
+}
+
+#volNotes {
+    font-size: .6em;
+    color: #999;
+    margin-left: 30px;
+}
