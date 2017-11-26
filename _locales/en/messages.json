@@ -27,6 +27,9 @@
       "message": "Open File"
    },
    "nOpenFolderTitle": {
+      "message": "Show in File Manager"
+   },
+   "nOpenFolderTitleMac": {
       "message": "Reveal in Finder"
    },
    "nOpenFolderTitleWin": {
