@@ -1,28 +1,9 @@
 //Author: Dingbao.ai [a.k.a ehaagwlke]
 
 //Date: 2016/Mar/05
-//Vesion: 0.8
+//Vesion: 0.8 (Manifest V3 service worker)
 
-//Date: 2015/Jun/21
-//Vesion: 0.7
-
-//Date: 2015/May/30
-//Version: 0.6
-
-//Date: 2015/May/16
-//Version: 0.5
-//Due to source management problems, this version is
-//just a copy from the release version of the code.
-//Now I switched to Github for source code management.
-
-//Date: 2015/Apr/11
-//Version: 0.4
-
-//Date: 2015/Mar/22
-//Version: 0.3
-
-//Date: 2014/Apr/14
-//Version: 0.2
+importScripts('consts.js', 'notification.js', 'download.js');
 
 /*======================Settings modifier========================*/
 
@@ -69,7 +50,6 @@ chrome.runtime.onInstalled.addListener(function(obj){
 //Clear the mess if we got uninstalled.
 chrome.management.onUninstalled.addListener(function(id){
     chrome.downloads.setShelfEnabled(true);
-    localStorage.clear();
     chrome.storage.local.clear();
     chrome.storage.sync.clear();
 });
@@ -103,7 +83,7 @@ chrome.downloads.onChanged.addListener(function(DLObj){
 
 /*===================Browser Action======================*/
 
-chrome.browserAction.onClicked.addListener(function(tab){
+chrome.action.onClicked.addListener(function(tab){
     createOrSelectDownloadPage();
 });
 
@@ -154,13 +134,32 @@ function saftyCheck(obj){
 
 function dangerDownloadHandler(id){
     var str = chrome.i18n.getMessage("aHarmfulFileAlert"),
-        cfm = confirm(str);
-    
-    if(cfm){
-        createOrSelectDownloadPage();
-    }else{
-        chrome.downloads.cancel(id, function(){
-            //do nothing;
-        });
-    }
+        notiId = "BDDangerAlert|" + id;
+
+    chrome.notifications.create(notiId, {
+        type: "basic",
+        iconUrl: "/img/icon-128.png",
+        title: chrome.i18n.getMessage("extName"),
+        message: str,
+        buttons: [
+            {title: chrome.i18n.getMessage("aHarmfulFileReviewButton")},
+            {title: chrome.i18n.getMessage("aHarmfulFileCancelButton")}
+        ],
+        requireInteraction: true
+    });
 }
+
+chrome.notifications.onButtonClicked.addListener(function(nid, btnIdx){
+    if(nid.indexOf("BDDangerAlert|") === 0){
+        var id = parseInt(nid.split('|')[1], 10);
+        chrome.notifications.clear(nid, function(){});
+
+        if(btnIdx === 0){
+            createOrSelectDownloadPage();
+        }else{
+            chrome.downloads.cancel(id, function(){
+                //do nothing;
+            });
+        }
+    }
+});

@@ -2,6 +2,12 @@
    "aHarmfulFileAlert": {
       "message": "The file is considered harmful to your system.\nGo to Download page and check?"
    },
+   "aHarmfulFileReviewButton": {
+      "message": "Review Download"
+   },
+   "aHarmfulFileCancelButton": {
+      "message": "Cancel Download"
+   },
    "author": {
       "message": "dingbao.ai[a.k.a ehaagwlke]"
    },

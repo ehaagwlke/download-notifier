@@ -10,24 +10,19 @@
         "128":"img/icon-128.png"
     },
     "background":{
-        "persistent": true,
-        "scripts":[ "js/consts.js",
-                    "js/notification.js",
-                    "js/download.js",
-                    "js/progress.js",
-                    "js/background.js"]
+        "service_worker":"js/background.js"
     },
     "default_locale":"en",
-    "manifest_version":2,
+    "manifest_version":3,
 
-    "browser_action": {
+    "action": {
         "default_icon": {
             "19": "img/icon-19.png",
             "38": "img/icon-48.png"
         },
         "default_title": "Better Downloader"
     },
-    
+
     "permissions": [
         "downloads",
         "downloads.open",
@@ -35,13 +30,12 @@
         "notifications",
         "tabs",
         "management",
-        "storage"
+        "storage",
+        "offscreen"
     ],
-    "options_page": "view/options_old.html",
     "options_ui": {
         "page": "view/options.html",
-        "chrome_style": true,
         "open_in_tab": false
     },
-    "minimum_chrome_version": "40"
+    "minimum_chrome_version": "109"
 }

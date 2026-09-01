@@ -63,7 +63,7 @@ function i18n(msg){
 
 // A storage helper
 function StorageHelper(){
-    var ls = localStorage[storageDownIdKey];
+    var ls;
 
     this.set = set;
     this.contains = contains;
@@ -204,15 +204,60 @@ function playSound(){
         'BDVolOfSound'], 
         function(obj){
             if(obj.BDIsPlaySound){
-                var el    = document.createElement('audio');
-
-                el.src = SOUNDS[obj.BDSoundID];
-                el.autoplay = true;
-                el.volume = obj.BDVolOfSound || 0.8;
+                ensureOffscreenDocument(function(){
+                    chrome.runtime.sendMessage({
+                        type: 'BDPlaySound',
+                        soundUrl: SOUNDS[obj.BDSoundID],
+                        volume: obj.BDVolOfSound || 0.8
+                    });
+                });
             }
     });
 }
 
+// Service workers have no DOM/Audio element, so sound playback happens
+// in a hidden Offscreen Document (chrome.offscreen), which we create
+// lazily on first use and then reuse.
+var _creatingOffscreenDocumentPromise;
+
+function ensureOffscreenDocument(callback){
+    if(chrome.offscreen && chrome.offscreen.hasDocument){
+        chrome.offscreen.hasDocument().then(function(hasDoc){
+            if(hasDoc){
+                callback();
+            }else{
+                createOffscreenDocument(callback);
+            }
+        });
+    }else{
+        createOffscreenDocument(callback);
+    }
+}
+
+function createOffscreenDocument(callback){
+    if(!_creatingOffscreenDocumentPromise){
+        _creatingOffscreenDocumentPromise = chrome.offscreen.createDocument({
+            url: 'offscreen.html',
+            reasons: ['AUDIO_PLAYBACK'],
+            justification: 'Play a notification sound when a download finishes.'
+        }).catch(function(){
+            // Document already exists (race with another trigger); ignore.
+        });
+    }
+    _creatingOffscreenDocumentPromise.then(callback);
+}
+
+
+// Service workers have no `window`, so alert() does not exist; surface
+// these error conditions as a basic notification instead.
+function notifyError(message){
+    chrome.notifications.create('BDError|' + Date.now(), {
+        type: 'basic',
+        iconUrl: defaultIconUrl,
+        title: i18n('extName'),
+        message: message
+    });
+}
 
 function openOrShowFileById(downId, action, alertContent){
     if(!downId || !action){
@@ -246,7 +291,7 @@ function openOrShowFileById(downId, action, alertContent){
             chrome.notifications.clear(notiId, function(){});
             delete ntfs[_id];
             shelper.remove(_id);
-            alert(_alertContent);
+            notifyError(_alertContent);
         }
     });
 }
@@ -289,7 +334,7 @@ chrome.notifications.onButtonClicked.addListener(function(nid, btnIdx){
                 chrome.notifications.clear(nid, function(){});
                 delete ntfs[downId];
                 shelper.remove(downId);
-                alert(strIdNotFound);
+                notifyError(strIdNotFound);
             }
         }
 
@@ -300,10 +345,10 @@ chrome.notifications.onButtonClicked.addListener(function(nid, btnIdx){
                 chrome.notifications.clear(nid, function(){});
                 delete ntfs[downId];
                 shelper.remove(downId);
-                alert(strIdNotFound);
+                notifyError(strIdNotFound);
             }
         }
     }else{
-        alert(strFileNotFound);
+        notifyError(strFileNotFound);
     }
 });
