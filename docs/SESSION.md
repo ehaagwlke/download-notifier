@@ -152,6 +152,14 @@ Root cause: `js/notification.js`'s `setFileIcon()` (inside `showNotification`) s
 - [ ] New i18n key `aUnseenCompletedTooltip` (en + zh_CN) with a `$COUNT$` placeholder
 - [x] Verify: node --check passes on all 4 JS files, JSON valid on both locale files, only those 6 files touched, all functions/listeners/calls confirmed present by direct read — re-check live badge behavior in Chrome is on the user
 
+## [2026-09-02 00:00] Request
+Merge the feature branch to main.
+
+## Outcome (downloads-popup feature)
+Status: ACCEPTED (merge request is itself the acceptance signal for the whole branch)
+Squash-merged `feature/downloads-popup` (4 wip commits: 54710be, b89474b, 023ded8, 34aa329) into `master` as a single clean commit `55e3017`, per the harness's "final commit — clean message, no WIP label" rule. `master` was not diverged (still at the tip the branch forked from), so no conflicts.
+Not pushed — `git push` requires a separate explicit ask, and it would additionally need to push the earlier MV3-migration commit (85d816d), which was also never pushed to origin/master.
+
 ## Assumptions (not blocking, noted per Auto Mode guidance rather than asked as a clarifying question)
 - Toolbar-icon click switches from "focus/open chrome://downloads tab" to "open this popup" — inferred directly from "add a drop list to the extension icon." The old behavior is preserved as a "View All Downloads" link inside the popup.
 - 50-item cap on the list (chrome.downloads.search limit) to keep the popup responsive; "View All Downloads" is the escape hatch for full history.
