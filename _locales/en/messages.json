@@ -58,5 +58,48 @@
    },
    "oVolNotes": {
       "message": "Volume here will be affected by system volume settings."
+   },
+   "pTitle": { "message": "Downloads" },
+   "pViewAll": { "message": "View All Downloads" },
+   "pEmpty": { "message": "No downloads yet" },
+   "pPause": { "message": "Pause" },
+   "pResume": { "message": "Resume" },
+   "pCancel": { "message": "Cancel" },
+   "pRetry": { "message": "Retry" },
+   "pOpen": { "message": "Open" },
+   "pShow": { "message": "Show in Folder" },
+   "pRemove": { "message": "Remove from List" },
+   "pDeleteFile": { "message": "Delete File" },
+   "pConfirmDelete": { "message": "Delete this file from your computer? This cannot be undone." },
+   "pStateDownloading": { "message": "Downloading" },
+   "pStatePaused": { "message": "Paused" },
+   "pStateCompleted": { "message": "Completed" },
+   "pStateMissing": { "message": "File Missing" },
+   "pStateInterrupted": { "message": "Failed" },
+   "pStateDangerous": { "message": "Potentially Harmful" },
+   "pDangerKeep": { "message": "Keep File" },
+   "pDangerDiscard": { "message": "Discard" },
+   "pSearchPlaceholder": { "message": "Search downloads" },
+   "pSearchLabel": { "message": "Search" },
+   "pSearchClose": { "message": "Close search" },
+   "pNoResults": { "message": "No matching downloads" },
+   "aDownloadsTooltip": {
+      "message": "$COUNT$ downloading — $PERCENT$% complete",
+      "placeholders": {
+         "count": { "content": "$1" },
+         "percent": { "content": "$2" }
+      }
+   },
+   "aDownloadsTooltipNoPercent": {
+      "message": "$COUNT$ downloading",
+      "placeholders": {
+         "count": { "content": "$1" }
+      }
+   },
+   "aUnseenCompletedTooltip": {
+      "message": "$COUNT$ new download(s) — click to view",
+      "placeholders": {
+         "count": { "content": "$1" }
+      }
    }
 }

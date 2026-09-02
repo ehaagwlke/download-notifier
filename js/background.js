@@ -3,7 +3,7 @@
 //Date: 2016/Mar/05
 //Vesion: 0.8 (Manifest V3 service worker)
 
-importScripts('consts.js', 'notification.js', 'download.js');
+importScripts('consts.js', 'notification.js', 'download.js', 'downloads-page.js');
 
 /*======================Settings modifier========================*/
 
@@ -81,43 +81,6 @@ chrome.downloads.onChanged.addListener(function(DLObj){
     clearNotificationWhenExistChange(DLObj);
 });
 
-/*===================Browser Action======================*/
-
-chrome.action.onClicked.addListener(function(tab){
-    createOrSelectDownloadPage();
-});
-
-function createOrSelectDownloadPage(){
-    chrome.windows.getAll({populate: true}, function(wins){
-        var i = 0,
-            l = wins.length,
-            tabs,
-            j = 0,
-            shouldCreate = true,
-            WinId;
-
-        for(; i < l; i++){
-            if(wins[i].type === "normal" && wins[i].tabs.length > 0){
-                tabs = wins[i].tabs;
-                WinId = wins[i].id;
-
-                for(; j < tabs.length; j++){
-                    if(tabs[j].url === "chrome://downloads/"){
-                        chrome.windows.update(WinId, {focused: true});
-                        chrome.tabs.update(tabs[j].id, {'selected': true});
-                        shouldCreate = false;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if(shouldCreate){
-            chrome.tabs.create({url: 'chrome://downloads', selected: true});
-        }
-    })
-}
-
 function saftyCheck(obj){
     if(obj && obj.hasOwnProperty("danger")){
         if(typeof obj.danger === "object"){
@@ -161,5 +124,13 @@ chrome.notifications.onButtonClicked.addListener(function(nid, btnIdx){
                 //do nothing;
             });
         }
+    }
+});
+
+// The popup marks completed downloads as "seen" by sending this
+// message the moment it opens (see js/popup.js).
+chrome.runtime.onMessage.addListener(function(msg){
+    if(msg && msg.type === 'BDPopupOpened'){
+        clearUnseenCompletedCount();
     }
 });

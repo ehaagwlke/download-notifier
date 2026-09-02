@@ -58,5 +58,48 @@
    },
    "oVolNotes": {
       "message": "提示音量大小受系统音量设置影响"
+   },
+   "pTitle": { "message": "下载" },
+   "pViewAll": { "message": "查看所有下载" },
+   "pEmpty": { "message": "暂无下载记录" },
+   "pPause": { "message": "暂停" },
+   "pResume": { "message": "继续" },
+   "pCancel": { "message": "取消" },
+   "pRetry": { "message": "重试" },
+   "pOpen": { "message": "打开" },
+   "pShow": { "message": "在文件夹中显示" },
+   "pRemove": { "message": "从列表中移除" },
+   "pDeleteFile": { "message": "删除文件" },
+   "pConfirmDelete": { "message": "确定要从电脑中删除此文件吗？此操作无法撤销。" },
+   "pStateDownloading": { "message": "正在下载" },
+   "pStatePaused": { "message": "已暂停" },
+   "pStateCompleted": { "message": "已完成" },
+   "pStateMissing": { "message": "文件已丢失" },
+   "pStateInterrupted": { "message": "下载失败" },
+   "pStateDangerous": { "message": "可能有害" },
+   "pDangerKeep": { "message": "保留文件" },
+   "pDangerDiscard": { "message": "放弃" },
+   "pSearchPlaceholder": { "message": "搜索下载记录" },
+   "pSearchLabel": { "message": "搜索" },
+   "pSearchClose": { "message": "关闭搜索" },
+   "pNoResults": { "message": "未找到匹配的下载记录" },
+   "aDownloadsTooltip": {
+      "message": "$COUNT$ 个下载中 — 已完成 $PERCENT$%",
+      "placeholders": {
+         "count": { "content": "$1" },
+         "percent": { "content": "$2" }
+      }
+   },
+   "aDownloadsTooltipNoPercent": {
+      "message": "$COUNT$ 个下载中",
+      "placeholders": {
+         "count": { "content": "$1" }
+      }
+   },
+   "aUnseenCompletedTooltip": {
+      "message": "$COUNT$ 个新完成的下载 — 点击查看",
+      "placeholders": {
+         "count": { "content": "$1" }
+      }
    }
 }

@@ -140,6 +140,7 @@ function showNotification(DItem){
             did = obj.id;
 
             shelper.set(did);
+            bumpUnseenCompletedCount();
 
             chrome.downloads.search({id: did}, function(DItemArray){
                 _obj = DItemArray[0];
@@ -168,7 +169,7 @@ function showNotification(DItem){
                 });
 
                 function setFileIcon(url){
-                    opt.iconURL = url ? url : defaultIconUrl;
+                    opt.iconUrl = url ? url : defaultIconUrl;
                 }
 
                 ntfs[did] = {};

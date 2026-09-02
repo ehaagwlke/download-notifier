@@ -1,6 +1,6 @@
 {
     "name":"__MSG_extName__",
-    "version":"0.0.6",
+    "version":"0.0.7",
     "description":"__MSG_description__",
     "icons":{
         "19":"img/icon-19.png",
@@ -20,7 +20,8 @@
             "19": "img/icon-19.png",
             "38": "img/icon-48.png"
         },
-        "default_title": "Better Downloader"
+        "default_title": "Better Downloader",
+        "default_popup": "view/popup.html"
     },
 
     "permissions": [

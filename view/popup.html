@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Downloads</title>
+    <link rel="stylesheet" href="/style/popup.css">
+</head>
+<body>
+    <header class="bd-popup-header">
+        <img src="/img/icon-32.png" class="bd-header-icon" alt="">
+        <span id="popupTitle" class="bd-popup-title"></span>
+        <div class="bd-search-wrap">
+            <input type="search" id="searchInput" class="bd-search-input" autocomplete="off">
+            <button type="button" id="searchToggle" class="bd-search-btn">
+                <span class="bd-icon-search"><svg viewBox="0 0 24 24" width="16" height="16"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="2"/><line x1="15" y1="15" x2="20" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+                <span class="bd-icon-close"><svg viewBox="0 0 24 24" width="16" height="16"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span>
+            </button>
+        </div>
+    </header>
+    <div id="downloadList" class="bd-download-list"></div>
+    <div id="emptyState" class="bd-empty-state" hidden></div>
+    <footer class="bd-popup-footer">
+        <button type="button" id="viewAllBtn" class="bd-link-btn"></button>
+    </footer>
+    <script src="/js/downloads-page.js"></script>
+    <script src="/js/popup.js"></script>
+</body>
+</html>
