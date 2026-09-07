@@ -21,15 +21,15 @@ function updateBrowserActionIcon(){
             setDownloadTitle(count, pct);
 
             if(pct === null){
-                setExtIcon({path: '/img/icon-19.png'});
+                setExtIcon({path: '/img/icon-16.png'});
             }else{
                 setExtIcon({imageData: {
-                    19: drawProgressIcon(19, pct),
-                    38: drawProgressIcon(38, pct)
+                    16: drawProgressIcon(16, pct),
+                    32: drawProgressIcon(32, pct)
                 }});
             }
         }else{
-            setExtIcon({path: '/img/icon-19.png'});
+            setExtIcon({path: '/img/icon-16.png'});
             showUnseenBadgeOrClear();
         }
     });
@@ -134,7 +134,11 @@ function drawProgressIcon(size, pct){
 }
 
 function setExtIcon(obj){
-    chrome.action.setIcon(obj);
+    chrome.action.setIcon(obj, function(){
+        if(chrome.runtime.lastError){
+            console.error('setIcon failed:', chrome.runtime.lastError.message);
+        }
+    });
 }
 
 function setExtBadgeText(t){

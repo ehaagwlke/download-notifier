@@ -31,7 +31,7 @@ chrome.runtime.onInstalled.addListener(function(obj){
         chrome.storage.sync.get(['BDIsShowShelf','BDIsPlaySound', 'BDVolOfSound'], function(obj){
             if(!obj.hasOwnProperty('BDIsShowShelf')){
                 chrome.storage.sync.set({'BDIsShowShelf': false});
-                chrome.downloads.setShelfEnabled(false);
+                setShelfVisibility(false);
             }
 
             if(!obj.hasOwnProperty('BDIsPlaySound')){
@@ -49,7 +49,7 @@ chrome.runtime.onInstalled.addListener(function(obj){
 
 //Clear the mess if we got uninstalled.
 chrome.management.onUninstalled.addListener(function(id){
-    chrome.downloads.setShelfEnabled(true);
+    setShelfVisibility(true);
     chrome.storage.local.clear();
     chrome.storage.sync.clear();
 });
@@ -62,7 +62,7 @@ chrome.downloads.onCreated.addListener(function(DLItem){
     chrome.storage.sync.get('BDIsShowShelf', function(obj){
         var BDIsShowShelf = obj.BDIsShowShelf;
         //console.log('on downloads created ', BDIsShowShelf);
-        chrome.downloads.setShelfEnabled(BDIsShowShelf);
+        setShelfVisibility(BDIsShowShelf);
     });
 });
 
@@ -70,9 +70,33 @@ chrome.storage.onChanged.addListener(function(obj, area){
     if(area === "sync" && obj.hasOwnProperty('BDIsShowShelf')){
         var showShelf = obj.BDIsShowShelf.newValue;
         //console.log('BDIsShowShelf value changed to ', showShelf);
-        chrome.downloads.setShelfEnabled(showShelf);
+        setShelfVisibility(showShelf);
     }
 });
+
+// chrome.downloads.setShelfEnabled throws "No matching signature" if
+// given anything but a real boolean (e.g. undefined, which happens
+// when a storage.onChanged event reports a removed key's .newValue).
+// Coerce defensively, and prefer the newer setUiOptions API where
+// available, since setShelfEnabled is deprecated/being removed from
+// Chrome in favor of it.
+function setShelfVisibility(enabled){
+    var isEnabled = !!enabled;
+
+    if(chrome.downloads.setUiOptions){
+        chrome.downloads.setUiOptions({enabled: isEnabled}, function(){
+            if(chrome.runtime.lastError){
+                console.error('setUiOptions failed:', chrome.runtime.lastError.message);
+            }
+        });
+    }else if(chrome.downloads.setShelfEnabled){
+        try{
+            chrome.downloads.setShelfEnabled(isEnabled);
+        }catch(e){
+            console.error('setShelfEnabled failed:', e.message);
+        }
+    }
+}
 
 chrome.downloads.onChanged.addListener(function(DLObj){
     saftyCheck(DLObj);

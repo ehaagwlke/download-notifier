@@ -160,6 +160,23 @@ Status: ACCEPTED (merge request is itself the acceptance signal for the whole br
 Squash-merged `feature/downloads-popup` (4 wip commits: 54710be, b89474b, 023ded8, 34aa329) into `master` as a single clean commit `55e3017`, per the harness's "final commit — clean message, no WIP label" rule. `master` was not diverged (still at the tip the branch forked from), so no conflicts.
 Not pushed — `git push` requires a separate explicit ask, and it would additionally need to push the earlier MV3-migration commit (85d816d), which was also never pushed to origin/master.
 
+## [2026-09-05 00:00] Bug report
+User reports the download progress indicator (toolbar icon ring/badge) isn't showing while downloading.
+
+## Gate 3 note — micro-fix exception used
+Found `manifest.json`'s `action.default_icon` declaring `"38": "img/icon-48.png"` — a 48px asset filed under a mismatched `"38"` size key — alongside `"19"`, both non-standard, pre-Retina-era icon sizes Chrome's modern toolbar doesn't natively expect (16/32 are the conventional sizes, and correctly-sized `icon-16.png`/`icon-32.png` assets already exist in `img/` but were unused for the toolbar icon). This is the most plausible cause of the icon failing to update. Fixed directly (small, targeted, diagnostic-driven — round-tripping through DeepSeek for a handful of value substitutions across 2 files would cost more than the fix):
+- `manifest.json`: `action.default_icon` -> `{"16": "img/icon-16.png", "32": "img/icon-32.png"}`.
+- `js/download.js`: both static-fallback `setExtIcon({path: '/img/icon-19.png'})` calls -> `icon-16.png`; `drawProgressIcon` calls in the imageData map switched from sizes 19/38 to 16/32 to match.
+- `js/download.js`: `setExtIcon` now checks `chrome.runtime.lastError` after `chrome.action.setIcon` and logs it via `console.error` — previously any `setIcon` failure would fail completely silently (no callback was passed at all), which is why this bug could exist undetected. If this fix doesn't fully resolve it, the added logging will surface the real error next time in the service worker console (chrome://extensions -> "service worker" link -> Console).
+- Verified: `node --check` passes, `manifest.json` valid JSON, no leftover 19/38 references outside the (correct, unrelated) top-level `icons` listing block.
+
+## [2026-09-05 00:00] Bug report
+`Error in event handler: TypeError: Error in invocation of downloads.setShelfEnabled(boolean enabled): No matching signature.` at js/background.js:73.
+
+## Gate 3 note — micro-fix exception used
+Line 73 is inside the `chrome.storage.onChanged` listener: `chrome.downloads.setShelfEnabled(showShelf)` where `showShelf = obj.BDIsShowShelf.newValue`. Chrome's "No matching signature" wording (as opposed to "is not a function") means the argument type didn't match `boolean` — i.e. `showShelf` was `undefined`, which happens whenever a storage change event reports a *removed* key (`StorageChange.newValue` is simply absent for removals, and `chrome.storage.sync` can transiently drop/resync keys across devices, or the extension's own `chrome.storage.sync.clear()` on uninstall/reinstall can produce this). Additionally, `chrome.downloads.setShelfEnabled` itself is a deprecated Chrome API being phased out in favor of `chrome.downloads.setUiOptions({enabled})`, so hardening this was worth doing in one pass rather than patching just the one call site.
+Fixed directly (single file, four call sites, bugfix-driven — same reasoning as prior micro-fixes this session): added `setShelfVisibility(enabled)` in `js/background.js`, which coerces its argument with `!!enabled` (so `undefined` becomes `false` instead of ever reaching the raw API call), prefers `chrome.downloads.setUiOptions` when available, falls back to `chrome.downloads.setShelfEnabled` wrapped in try/catch otherwise, and logs any failure via `chrome.runtime.lastError`/`catch` instead of throwing uncaught. All 4 existing `chrome.downloads.setShelfEnabled(...)` call sites (onInstalled, onUninstalled, onCreated, storage.onChanged) now route through it. Verified: `node --check` passes, grep confirms no raw `chrome.downloads.setShelfEnabled` call sites remain outside the new helper itself.
+
 ## Assumptions (not blocking, noted per Auto Mode guidance rather than asked as a clarifying question)
 - Toolbar-icon click switches from "focus/open chrome://downloads tab" to "open this popup" — inferred directly from "add a drop list to the extension icon." The old behavior is preserved as a "View All Downloads" link inside the popup.
 - 50-item cap on the list (chrome.downloads.search limit) to keep the popup responsive; "View All Downloads" is the escape hatch for full history.
