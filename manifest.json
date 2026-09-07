@@ -28,6 +28,7 @@
         "downloads",
         "downloads.open",
         "downloads.shelf",
+        "downloads.ui",
         "notifications",
         "tabs",
         "management",
