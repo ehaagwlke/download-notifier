@@ -11,16 +11,36 @@
 
     chrome.runtime.sendMessage({type: 'BDPopupOpened'});
 
+    // BDTheme: 'auto' (default, follows the OS), 'light' or 'dark'.
+    function applyTheme(theme){
+        if(theme === 'light' || theme === 'dark'){
+            document.documentElement.setAttribute('data-theme', theme);
+        }else{
+            document.documentElement.removeAttribute('data-theme');
+        }
+    }
+
+    chrome.storage.sync.get('BDTheme', function(obj){
+        applyTheme(obj.BDTheme);
+    });
+
+    chrome.storage.onChanged.addListener(function(changes, area){
+        if(area === 'sync' && changes.BDTheme){
+            applyTheme(changes.BDTheme.newValue);
+        }
+    });
+
     var ICONS = {
-        pause: '<svg viewBox="0 0 24 24" width="14" height="14"><rect x="6" y="5" width="4" height="14" fill="currentColor"/><rect x="14" y="5" width="4" height="14" fill="currentColor"/></svg>',
-        resume: '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
-        cancel: '<svg viewBox="0 0 24 24" width="14" height="14"><line x1="5" y1="5" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="19" y1="5" x2="5" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
-        retry: '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M12 5V2L8 6l4 4V7c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0020 13c0-4.42-3.58-8-8-8zm-6 8c0-1.01.25-1.97.7-2.8L5.24 8.74A7.93 7.93 0 004 13c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6z" fill="currentColor"/></svg>',
-        open: '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 2h9l5 5v15H6z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M14 2v6h6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
-        show: '<svg viewBox="0 0 24 24" width="14" height="14"><path d="M3 6h6l2 2h10v11H3z" fill="currentColor"/></svg>',
-        remove: '<svg viewBox="0 0 24 24" width="14" height="14"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><line x1="7" y1="12" x2="17" y2="12" stroke="currentColor" stroke-width="1.5"/></svg>',
-        deleteFile: '<svg viewBox="0 0 24 24" width="14" height="14"><line x1="4" y1="7" x2="20" y2="7" stroke="currentColor" stroke-width="1.5"/><path d="M6 7h12l-1 13H7z" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M9 7V4h6v3" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>',
-        keep: '<svg viewBox="0 0 24 24" width="14" height="14"><polyline points="4,12 9,17 20,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        pause: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 5v14M16 5v14"/></svg>',
+        resume: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5l12 7-12 7z"/></svg>',
+        cancel: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+        retry: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 10-2.3 5.7"/><path d="M20 4v7h-7"/></svg>',
+        open: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>',
+        show: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h6l2 2h10v11H3z"/></svg>',
+        remove: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>',
+        deleteFile: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>',
+        copyLink: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 005.66 0l3-3a4 4 0 00-5.66-5.66l-1 1"/><path d="M14 10a4 4 0 00-5.66 0l-3 3a4 4 0 005.66 5.66l1-1"/></svg>',
+        keep: '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>'
     };
 
     var PRIMARY_ACTION = {
@@ -99,6 +119,83 @@
         return '';
     }
 
+    function formatBytes(n){
+        var units = ['B', 'KB', 'MB', 'GB', 'TB'],
+            i = 0;
+
+        while(n >= 1024 && i < units.length - 1){
+            n /= 1024;
+            i++;
+        }
+
+        return (i === 0 || n >= 100 ? Math.round(n) : n.toFixed(1)) + ' ' + units[i];
+    }
+
+    // Language-neutral secondary line: "12.4 MB of 80 MB · 15%" while
+    // running, the final size once done.
+    function metaText(item, status){
+        var pct;
+
+        if(status === 'downloading' || status === 'paused'){
+            if(item.totalBytes > 0){
+                pct = Math.min(100, Math.round((item.bytesReceived / item.totalBytes) * 100));
+                return formatBytes(item.bytesReceived) + ' / ' + formatBytes(item.totalBytes) + ' · ' + pct + '%';
+            }
+            return formatBytes(item.bytesReceived || 0);
+        }
+
+        if(item.fileSize > 0){
+            return formatBytes(item.fileSize);
+        }
+
+        return '';
+    }
+
+    // Color-coded extension tile (replaces Chrome's generic gray file
+    // icon). Hue per file category; lightness is theme-driven in CSS.
+    var FILE_CATEGORIES = [
+        {id: 'apps',      label: 'pTypeApps',      exts: 'dmg pkg exe msi deb rpm apk iso app'},
+        {id: 'archives',  label: 'pTypeArchives',  exts: 'zip rar 7z tar gz tgz bz2 xz'},
+        {id: 'documents', label: 'pTypeDocuments', exts: 'pdf doc docx ppt pptx xls xlsx txt md rtf csv pages key numbers epub'},
+        {id: 'images',    label: 'pTypeImages',    exts: 'png jpg jpeg gif webp svg heic avif bmp tiff ico psd'},
+        {id: 'video',     label: 'pTypeVideo',     exts: 'mp4 mov mkv avi webm m4v flv wmv'},
+        {id: 'audio',     label: 'pTypeAudio',     exts: 'mp3 wav flac m4a aac ogg opus'},
+        {id: 'code',      label: 'pTypeCode',      exts: 'js ts json py html css xml sh yml yaml sql log'}
+    ],
+        OTHER_CATEGORY = {id: 'other', label: 'pTypeOther'};
+
+    function extOf(name){
+        var m = /\.([A-Za-z0-9]{1,5})$/.exec(name);
+        return m ? m[1].toLowerCase() : '';
+    }
+
+    function categoryOf(name){
+        var ext = extOf(name),
+            i;
+
+        for(i = 0; ext && i < FILE_CATEGORIES.length; i++){
+            if((' ' + FILE_CATEGORIES[i].exts + ' ').indexOf(' ' + ext + ' ') !== -1){
+                return FILE_CATEGORIES[i];
+            }
+        }
+        return OTHER_CATEGORY;
+    }
+
+    function fileTile(tile, name){
+        var ext = extOf(name);
+
+        tile.textContent = ext ? ext.toUpperCase() : 'FILE';
+    }
+
+    // "New" = started or finished after the previous time the popup was
+    // opened. seenBaseline is that previous open time (0 until loaded).
+    var seenBaseline = 0;
+
+    function isNewItem(item){
+        var t = Math.max(Date.parse(item.startTime) || 0, Date.parse(item.endTime) || 0);
+        return t > seenBaseline;
+    }
+
     function getStatus(item){
         if(item.danger && item.danger !== 'safe' && item.danger !== 'accepted'){
             return 'dangerous';
@@ -146,20 +243,25 @@
             frag.appendChild(actionButton('pDangerKeep', 'keep', item.id));
             frag.appendChild(actionButton('pDangerDiscard', 'cancel', item.id, 'bd-danger-btn'));
         }else if(status === 'downloading'){
+            frag.appendChild(actionButton('pCopyLink', 'copyLink', item.id));
             frag.appendChild(actionButton('pPause', 'pause', item.id));
             frag.appendChild(actionButton('pCancel', 'cancel', item.id, 'bd-danger-btn'));
         }else if(status === 'paused'){
+            frag.appendChild(actionButton('pCopyLink', 'copyLink', item.id));
             frag.appendChild(actionButton('pResume', 'resume', item.id));
             frag.appendChild(actionButton('pCancel', 'cancel', item.id, 'bd-danger-btn'));
         }else if(status === 'interrupted'){
+            frag.appendChild(actionButton('pCopyLink', 'copyLink', item.id));
             frag.appendChild(actionButton('pRetry', 'retry', item.id));
             frag.appendChild(actionButton('pRemove', 'remove', item.id));
         }else if(status === 'completed'){
+            frag.appendChild(actionButton('pCopyLink', 'copyLink', item.id));
             frag.appendChild(actionButton('pOpen', 'open', item.id));
             frag.appendChild(actionButton('pShow', 'show', item.id));
             frag.appendChild(actionButton('pRemove', 'remove', item.id));
             frag.appendChild(actionButton('pDeleteFile', 'deleteFile', item.id, 'bd-danger-btn'));
         }else if(status === 'missing'){
+            frag.appendChild(actionButton('pCopyLink', 'copyLink', item.id));
             frag.appendChild(actionButton('pRemove', 'remove', item.id));
         }
 
@@ -171,7 +273,9 @@
             name = basename(item),
             row = document.createElement('div'),
             fillEl = document.createElement('div'),
-            iconImg = document.createElement('img'),
+            trackEl = document.createElement('div'),
+            iconTile = document.createElement('div'),
+            metaEl = document.createElement('div'),
             info = document.createElement('div'),
             nameEl = document.createElement('div'),
             statusEl = document.createElement('div'),
@@ -183,6 +287,10 @@
         row.setAttribute('data-status', status);
         row.setAttribute('data-id', item.id);
         row.setAttribute('data-name', name.toLowerCase());
+        row.setAttribute('data-type', categoryOf(name).id);
+        if(isNewItem(item)){
+            row.classList.add('bd-item-new');
+        }
 
         fillEl.className = 'bd-progress-fill';
         if((status === 'downloading' || status === 'paused') && item.totalBytes > 0){
@@ -191,11 +299,9 @@
         }else{
             fillEl.style.width = '0%';
         }
-        row.appendChild(fillEl);
 
-        iconImg.className = 'bd-file-icon';
-        iconImg.alt = '';
-        setIcon(item.id, iconImg);
+        iconTile.className = 'bd-file-tile';
+        fileTile(iconTile, name);
 
         info.className = 'bd-download-info';
 
@@ -206,14 +312,24 @@
         statusEl.className = 'bd-download-status';
         statusEl.textContent = STATUS_LABELS[status] ? i18n(STATUS_LABELS[status]) : '';
 
+        metaEl.className = 'bd-download-meta';
+        metaEl.textContent = metaText(item, status);
+
         info.appendChild(nameEl);
-        info.appendChild(statusEl);
+        info.appendChild(metaEl);
+
+        if(status === 'downloading' || status === 'paused'){
+            trackEl.className = 'bd-progress-track';
+            trackEl.appendChild(fillEl);
+            info.appendChild(trackEl);
+        }
 
         actionsEl.className = 'bd-download-actions';
         actionsEl.appendChild(buildActions(item, status));
 
-        row.appendChild(iconImg);
+        row.appendChild(iconTile);
         row.appendChild(info);
+        row.appendChild(statusEl);
         row.appendChild(actionsEl);
 
         applyFilterToRow(row);
@@ -221,24 +337,101 @@
         return row;
     }
 
-    function setIcon(id, imgNode){
-        if(iconCache[id]){
-            imgNode.src = iconCache[id];
-            return;
+    // File-type filter: chips are built from the rows actually present
+    // (history records count even when the file itself was deleted), so
+    // only types with at least one item are offered.
+    var activeType = 'all',
+        typeFilterEl = document.getElementById('typeFilter'),
+        typeFilterSig = '';
+
+    function updateTypeFilter(){
+        var rows = listNode.children,
+            counts = {},
+            order = FILE_CATEGORIES.concat([OTHER_CATEGORY]),
+            chips = [],
+            sig,
+            i,
+            t;
+
+        for(i = 0; i < rows.length; i++){
+            if(rows[i].classList.contains('bd-removing')){
+                continue;
+            }
+            t = rows[i].getAttribute('data-type');
+            counts[t] = (counts[t] || 0) + 1;
         }
-        chrome.downloads.getFileIcon(id, {size: 16}, function(url){
-            if(url){
-                iconCache[id] = url;
-                imgNode.src = url;
+
+        order.forEach(function(cat){
+            if(counts[cat.id]){
+                chips.push({id: cat.id, label: i18n(cat.label), count: counts[cat.id]});
             }
         });
+
+        // A filter that no longer has items falls back to "All".
+        if(activeType !== 'all' && !counts[activeType]){
+            activeType = 'all';
+            applyFilter();
+        }
+
+        // One type (or none) leaves nothing to filter by.
+        if(chips.length < 2){
+            typeFilterEl.hidden = true;
+            typeFilterEl.textContent = '';
+            typeFilterSig = '';
+            return;
+        }
+
+        sig = activeType + '|' + chips.map(function(c){ return c.id + c.count; }).join(',');
+        if(sig === typeFilterSig){
+            return;
+        }
+        typeFilterSig = sig;
+
+        typeFilterEl.textContent = '';
+        [{id: 'all', label: i18n('pTypeAll'), count: 0}].concat(chips).forEach(function(c){
+            var btn = document.createElement('button'),
+                n;
+
+            btn.type = 'button';
+            btn.className = 'bd-type-chip' + (c.id === activeType ? ' bd-active' : '');
+            btn.setAttribute('data-type', c.id);
+            btn.setAttribute('aria-pressed', c.id === activeType ? 'true' : 'false');
+            btn.textContent = c.label;
+            if(c.count){
+                n = document.createElement('span');
+                n.className = 'bd-type-count';
+                n.textContent = c.count;
+                btn.appendChild(n);
+            }
+            typeFilterEl.appendChild(btn);
+        });
+        typeFilterEl.hidden = false;
     }
+
+    typeFilterEl.addEventListener('click', function(evt){
+        var btn = evt.target.closest ? evt.target.closest('.bd-type-chip') : null;
+        if(btn){
+            activeType = btn.getAttribute('data-type');
+            applyFilter();
+        }
+    });
+
+    // Vertical wheel scrolls the chip row sideways (no visible scrollbar).
+    typeFilterEl.addEventListener('wheel', function(evt){
+        if(evt.deltaY){
+            typeFilterEl.scrollLeft += evt.deltaY;
+            evt.preventDefault();
+        }
+    }, {passive: false});
 
     function currentQuery(){
         return searchInput.value.trim().toLowerCase();
     }
 
     function rowMatchesQuery(row, query){
+        if(activeType !== 'all' && row.getAttribute('data-type') !== activeType){
+            return false;
+        }
         if(!query){
             return true;
         }
@@ -289,16 +482,26 @@
 
     function removeRow(id){
         var existing = document.getElementById('dl-item-' + id);
-        if(existing){
-            existing.parentNode.removeChild(existing);
+        if(!existing){
+            return;
         }
-        toggleEmptyState();
+
+        // Fade out, then drop the node.
+        existing.classList.add('bd-removing');
+        setTimeout(function(){
+            if(existing.parentNode){
+                existing.parentNode.removeChild(existing);
+            }
+            toggleEmptyState();
+        }, 180);
     }
 
     function toggleEmptyState(){
         var hasVisible = countVisibleRows() > 0;
-        emptyNode.textContent = currentQuery() ? i18n('pNoResults') : i18n('pEmpty');
+        emptyNode.textContent = (currentQuery() || activeType !== 'all') ? i18n('pNoResults') : i18n('pEmpty');
         emptyNode.hidden = hasVisible;
+        listNode.hidden = !hasVisible;
+        updateTypeFilter();
     }
 
     function renderAll(items){
@@ -350,15 +553,90 @@
                 removeRow(id);
                 break;
             case 'deleteFile':
-                if(window.confirm(i18n('pConfirmDelete'))){
-                    chrome.downloads.removeFile(id, function(){});
-                }
+                // Delete the file, then forget the history entry too, so
+                // one confirmed action fully removes the item.
+                chrome.downloads.removeFile(id, function(){
+                    if(chrome.runtime.lastError){
+                        console.error('removeFile failed:', chrome.runtime.lastError.message);
+                        return;
+                    }
+                    chrome.downloads.erase({id: id});
+                    removeRow(id);
+                });
                 break;
         }
     }
 
+    // Inline two-step confirm for the destructive trash button: first
+    // click arms it ("Delete file?"), second click within 3s confirms;
+    // otherwise it quietly reverts.
+    function armDeleteConfirm(btn){
+        var label = i18n('pDeleteConfirm'),
+            original = btn.innerHTML,
+            originalTitle = btn.title;
+
+        btn.classList.add('bd-confirming');
+        btn.innerHTML = ICONS.keep + '<span>' + label + '</span>';
+        btn.title = label;
+        btn.setAttribute('aria-label', label);
+
+        setTimeout(function(){
+            if(btn.isConnected && btn.classList.contains('bd-confirming')){
+                btn.classList.remove('bd-confirming');
+                btn.innerHTML = original;
+                btn.title = originalTitle;
+                btn.setAttribute('aria-label', originalTitle);
+            }
+        }, 3000);
+    }
+
+    // Copy the source URL (finalUrl = after redirects) so a download can be
+    // redone later even if the file is gone. Flashes a check on success.
+    function copyLink(btn, id){
+        chrome.downloads.search({id: id}, function(arr){
+            var item = arr && arr[0],
+                url = item && (item.finalUrl || item.url),
+                original = btn.innerHTML,
+                originalTitle = btn.title;
+
+            if(!url){
+                return;
+            }
+
+            navigator.clipboard.writeText(url).then(function(){
+                var label = i18n('pLinkCopied');
+
+                btn.classList.add('bd-copied');
+                btn.innerHTML = ICONS.keep;
+                btn.title = label;
+                btn.setAttribute('aria-label', label);
+
+                setTimeout(function(){
+                    if(btn.isConnected){
+                        btn.classList.remove('bd-copied');
+                        btn.innerHTML = original;
+                        btn.title = originalTitle;
+                        btn.setAttribute('aria-label', originalTitle);
+                    }
+                }, 1500);
+            }, function(err){
+                console.error('copy link failed:', err);
+            });
+        });
+    }
+
     listNode.addEventListener('click', function(evt){
         var btn = evt.target.closest ? evt.target.closest('.bd-action-btn') : null;
+        if(btn && btn.getAttribute('data-action') === 'copyLink'){
+            copyLink(btn, parseInt(btn.getAttribute('data-id'), 10));
+            return;
+        }
+
+        if(btn && btn.getAttribute('data-action') === 'deleteFile' && !btn.classList.contains('bd-confirming')){
+            armDeleteConfirm(btn);
+            return;
+        }
+
         if(btn){
             handleAction(btn.getAttribute('data-action'), parseInt(btn.getAttribute('data-id'), 10));
             return;
@@ -389,5 +667,40 @@
         removeRow(id);
     });
 
-    chrome.downloads.search({orderBy: ['-startTime'], limit: 50}, renderAll);
+    // onChanged doesn't fire for bytesReceived, so while the popup is open
+    // refresh running rows once a second — in place, so hover state and
+    // the action buttons under the cursor aren't rebuilt.
+    function updateLive(item){
+        var row = document.getElementById('dl-item-' + item.id),
+            fill,
+            meta;
+
+        if(!row || getStatus(item) !== row.getAttribute('data-status')){
+            renderRow(item);
+            return;
+        }
+
+        fill = row.querySelector('.bd-progress-fill');
+        meta = row.querySelector('.bd-download-meta');
+
+        if(fill && item.totalBytes > 0){
+            fill.style.width = Math.min(100, (item.bytesReceived / item.totalBytes) * 100) + '%';
+        }
+        meta.textContent = metaText(item, row.getAttribute('data-status'));
+    }
+
+    setInterval(function(){
+        if(!listNode.querySelector('.bd-status-downloading')){
+            return;
+        }
+        chrome.downloads.search({state: 'in_progress'}, function(arr){
+            (arr || []).forEach(updateLive);
+        });
+    }, 1000);
+
+    chrome.storage.local.get('BDLastSeenTime', function(obj){
+        seenBaseline = obj.BDLastSeenTime || 0;
+        chrome.storage.local.set({BDLastSeenTime: Date.now()});
+        chrome.downloads.search({orderBy: ['-startTime'], limit: 50}, renderAll);
+    });
 }());

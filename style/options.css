@@ -1,53 +1,153 @@
-body {
-    font-size: 14px;
+/* Same tokens and type as the popup (style/popup.css) so both surfaces
+   read as one product. Follows the OS unless BDTheme forces light/dark. */
+:root{
+    color-scheme: light dark;
+    --o-bg: #ffffff;
+    --o-fg: #1d1f23;
+    --o-muted: #5f6670;
+    --o-border: #e4e6ea;
+    --o-hover: #f3f4f6;
+    --o-accent: #12b76a;
+    --o-focus: #2563eb;
+}
+
+:root[data-theme="light"]{
+    color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+        --o-bg: #202124;
+        --o-fg: #e8eaed;
+        --o-muted: #a1a7b0;
+        --o-border: #3c3f44;
+        --o-hover: #2b2d31;
+        --o-accent: #22c55e;
+        --o-focus: #8ab4f8;
+    }
+}
+
+:root[data-theme="dark"]{
+    color-scheme: dark;
+    --o-bg: #202124;
+    --o-fg: #e8eaed;
+    --o-muted: #a1a7b0;
+    --o-border: #3c3f44;
+    --o-hover: #2b2d31;
+    --o-accent: #22c55e;
+    --o-focus: #8ab4f8;
+}
+
+*{
+    box-sizing: border-box;
+}
+
+body{
+    margin: 0;
+    background: var(--o-bg);
+    color: var(--o-fg);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
     -webkit-user-select: none;
+    user-select: none;
 }
 
-.wrapper {
-    width: 600px;
-    margin: 2em auto;
-    background-color: #EFEFEF;
-    padding: 5px;
+.o-page{
+    padding: 8px 20px 16px;
 }
 
-.header {
-    line-height: 64px;
-    height: 64px;
-    padding: 0;
-    position: relative;
+.o-row{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-height: 44px;
+    border-bottom: 1px solid var(--o-border);
 }
 
-#extName {
-    font-size: 22px;
-    position: absolute;
-    top: 50%;
-    transform: translate(0, -50%);
-}
-
-hr {
-    border: 1px solid #999;
-}
-
-#sounds {
-    text-indent: 2em;
-    margin-top: .5em;
+.o-sub{
     display: none;
+    padding-left: 26px;
+    border-bottom: 1px solid var(--o-border);
 }
 
-.mediaControl {
-    width: 24px;
-    height: 24px;
-    border-radius: 100px;
-    border: 1px solid #999;
-    vertical-align: middle;
+.o-sub .o-row{
+    border-bottom: none;
+    min-height: 40px;
 }
 
-#volumeOfSound {
-    vertical-align: middle;
+.o-label{
+    flex: 0 0 140px;
+    color: var(--o-muted);
 }
 
-#volNotes {
-    font-size: .6em;
-    color: #999;
-    margin-left: 30px;
+/* Nested rows are indented 26px; shrink their label so controls line up. */
+.o-sub .o-label{
+    flex-basis: 114px;
+}
+
+label{
+    cursor: pointer;
+}
+
+input[type="checkbox"],
+input[type="range"]{
+    accent-color: var(--o-accent);
+}
+
+input[type="checkbox"]{
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    cursor: pointer;
+}
+
+select{
+    width: 240px;
+    height: 30px;
+    padding: 0 28px 0 10px;
+    border: 1px solid var(--o-border);
+    border-radius: 8px;
+    background-color: var(--o-bg);
+    color: var(--o-fg);
+    font: inherit;
+    cursor: pointer;
+}
+
+select:hover{
+    background-color: var(--o-hover);
+}
+
+:focus-visible{
+    outline: 2px solid var(--o-focus);
+    outline-offset: 2px;
+}
+
+.mediaControl{
+    width: 28px;
+    height: 28px;
+    padding: 4px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.mediaControl:hover{
+    background: var(--o-hover);
+}
+
+#volumeOfSound{
+    width: 160px;
+}
+
+.o-value{
+    min-width: 28px;
+    color: var(--o-muted);
+    font-variant-numeric: tabular-nums;
+}
+
+.o-note{
+    margin: 0 0 10px;
+    color: var(--o-muted);
+    font-size: 12px;
 }

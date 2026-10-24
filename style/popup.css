@@ -1,29 +1,75 @@
+/* Theme tokens. Light is the base; dark applies when the user picked
+   "dark" (data-theme on <html>, set by popup.js from BDTheme) or when the
+   setting is auto/unset and the OS prefers dark. */
 :root{
+    color-scheme: light dark;
     --bd-bg: #ffffff;
-    --bd-fg: #1f1f1f;
-    --bd-border: #e0e0e0;
-    --bd-muted: #6b6b6b;
-    --bd-accent: #00cd66;
-    --bd-danger: #d64545;
-    --bd-warn: #b5690a;
-    --bd-hover: #f5f5f5;
-    --bd-progress-downloading: rgba(0, 205, 102, 0.20);
-    --bd-progress-paused: rgba(255, 169, 64, 0.20);
+    --bd-fg: #1d1f23;
+    --bd-muted: #5f6670;
+    --bd-border: #e4e6ea;
+    --bd-hover: #f3f4f6;
+    --bd-accent: #0a8a4a;
+    --bd-accent-fill: #12b76a;
+    --bd-accent-soft: rgba(18, 183, 106, 0.14);
+    --bd-warn: #9a5b00;
+    --bd-warn-fill: #f59e0b;
+    --bd-warn-soft: rgba(245, 158, 11, 0.16);
+    --bd-danger: #c62828;
+    --bd-danger-soft: rgba(198, 40, 40, 0.10);
+    --bd-focus: #2563eb;
+    --bd-new: #3b82f6;
+    --bd-new-soft: rgba(59, 130, 246, 0.09);
+    --bd-tile-l: 34%;
+    --bd-tile-bg: 0.13;
+}
+
+:root[data-theme="light"]{
+    color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark){
-    :root{
-        --bd-bg: #1e1e1e;
-        --bd-fg: #f0f0f0;
-        --bd-border: #3a3a3a;
-        --bd-muted: #a0a0a0;
-        --bd-accent: #00e676;
-        --bd-danger: #ff6b6b;
-        --bd-warn: #ffb74d;
-        --bd-hover: #2a2a2a;
-        --bd-progress-downloading: rgba(0, 230, 118, 0.28);
-        --bd-progress-paused: rgba(255, 183, 77, 0.28);
+    :root:not([data-theme="light"]){
+        --bd-bg: #202124;
+        --bd-fg: #e8eaed;
+        --bd-muted: #a1a7b0;
+        --bd-border: #3c3f44;
+        --bd-hover: #2b2d31;
+        --bd-accent: #4ade80;
+        --bd-accent-fill: #22c55e;
+        --bd-accent-soft: rgba(74, 222, 128, 0.16);
+        --bd-warn: #fbbf24;
+        --bd-warn-fill: #fbbf24;
+        --bd-warn-soft: rgba(251, 191, 36, 0.16);
+        --bd-danger: #f28b82;
+        --bd-danger-soft: rgba(242, 139, 130, 0.16);
+        --bd-focus: #8ab4f8;
+        --bd-new: #60a5fa;
+        --bd-new-soft: rgba(96, 165, 250, 0.12);
+        --bd-tile-l: 76%;
+        --bd-tile-bg: 0.20;
     }
+}
+
+:root[data-theme="dark"]{
+    color-scheme: dark;
+    --bd-bg: #202124;
+    --bd-fg: #e8eaed;
+    --bd-muted: #a1a7b0;
+    --bd-border: #3c3f44;
+    --bd-hover: #2b2d31;
+    --bd-accent: #4ade80;
+    --bd-accent-fill: #22c55e;
+    --bd-accent-soft: rgba(74, 222, 128, 0.16);
+    --bd-warn: #fbbf24;
+    --bd-warn-fill: #fbbf24;
+    --bd-warn-soft: rgba(251, 191, 36, 0.16);
+    --bd-danger: #f28b82;
+    --bd-danger-soft: rgba(242, 139, 130, 0.16);
+    --bd-focus: #8ab4f8;
+    --bd-new: #60a5fa;
+    --bd-new-soft: rgba(96, 165, 250, 0.12);
+    --bd-tile-l: 76%;
+    --bd-tile-bg: 0.20;
 }
 
 *{
@@ -37,29 +83,43 @@ body{
     overflow: hidden;
     background: var(--bd-bg);
     color: var(--bd-fg);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
     font-size: 13px;
+    line-height: 1.4;
     display: flex;
     flex-direction: column;
 }
 
+button{
+    font-family: inherit;
+}
+
+:focus-visible{
+    outline: 2px solid var(--bd-focus);
+    outline-offset: 1px;
+}
+
+/* ---------- header ---------- */
 .bd-popup-header{
+    flex-shrink: 0;
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 10px 12px;
-    border-bottom: 1px solid var(--bd-border);
+    padding: 14px 12px 12px 14px;
 }
 
 .bd-header-icon{
-    width: 18px;
-    height: 18px;
+    width: 30px;
+    height: 30px;
+    padding: 2px;
     flex-shrink: 0;
-    transition: width 0.15s ease, opacity 0.15s ease, margin 0.15s ease;
+    color: var(--bd-fg);
+    transition: width 0.2s ease, padding 0.2s ease, opacity 0.2s ease, margin 0.2s ease;
 }
 
 .bd-popup-header.bd-searching .bd-header-icon{
     width: 0;
+    padding: 0;
     opacity: 0;
     margin-right: -8px;
 }
@@ -68,11 +128,12 @@ body{
     flex: 1;
     min-width: 0;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 16px;
+    letter-spacing: -0.015em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    transition: flex 0.15s ease, opacity 0.15s ease, margin 0.15s ease;
+    transition: flex 0.2s ease, opacity 0.2s ease, margin 0.2s ease;
 }
 
 .bd-popup-header.bd-searching .bd-popup-title{
@@ -84,7 +145,6 @@ body{
 }
 
 .bd-search-wrap{
-    position: relative;
     display: flex;
     align-items: center;
     flex-shrink: 0;
@@ -97,42 +157,48 @@ body{
 .bd-search-input{
     width: 0;
     min-width: 0;
+    height: 30px;
     padding: 0;
     margin: 0;
     border: none;
-    border-radius: 6px;
+    border-radius: 15px;
     background: var(--bd-hover);
     color: var(--bd-fg);
-    font-size: 12px;
+    font-size: 13px;
     opacity: 0;
     pointer-events: none;
     transition: width 0.2s ease, opacity 0.2s ease, padding 0.2s ease, margin 0.2s ease;
+}
+
+.bd-search-input::placeholder{
+    color: var(--bd-muted);
 }
 
 .bd-popup-header.bd-searching .bd-search-input{
     width: 100%;
     opacity: 1;
     pointer-events: auto;
-    padding: 5px 8px;
+    padding: 0 12px;
     margin-right: 6px;
 }
 
-.bd-search-input:focus{
-    outline: none;
+.bd-search-input:focus-visible{
+    outline-offset: 0;
 }
 
 .bd-search-btn{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 26px;
-    height: 26px;
+    width: 32px;
+    height: 32px;
     flex-shrink: 0;
     border: none;
-    border-radius: 4px;
+    border-radius: 50%;
     background: transparent;
     color: var(--bd-muted);
     cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .bd-search-btn:hover{
@@ -152,16 +218,77 @@ body{
     display: inline-flex;
 }
 
+/* ---------- file-type filter ---------- */
+.bd-type-filter{
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    padding: 0 12px 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.bd-type-filter::-webkit-scrollbar{
+    display: none;
+}
+
+.bd-type-filter[hidden]{
+    display: none;
+}
+
+.bd-type-chip{
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 26px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--bd-muted);
+    font: inherit;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.bd-type-chip:hover{
+    background: var(--bd-hover);
+    color: var(--bd-fg);
+}
+
+.bd-type-chip.bd-active{
+    background: var(--bd-fg);
+    color: var(--bd-bg);
+    font-weight: 600;
+}
+
+.bd-type-count{
+    font-size: 11px;
+    font-weight: 500;
+    opacity: 0.6;
+}
+
+/* ---------- list ---------- */
 .bd-download-list{
+    min-height: 0;
     overflow-y: auto;
-    max-height: 380px;
-    padding: 6px 0;
+    /* Fixed height so filtering/searching never makes the popup jump. */
+    height: 340px;
+    padding: 0 6px 6px;
     display: flex;
     flex-direction: column;
+    gap: 2px;
+}
+
+.bd-download-list[hidden]{
+    display: none;
 }
 
 .bd-download-list::-webkit-scrollbar{
-    width: 6px;
+    width: 8px;
 }
 
 .bd-download-list::-webkit-scrollbar-track{
@@ -171,13 +298,22 @@ body{
 .bd-download-list::-webkit-scrollbar-thumb{
     background: var(--bd-border);
     border-radius: 999px;
+    border: 2px solid var(--bd-bg);
+}
+
+.bd-empty-state[hidden]{
+    display: none;
 }
 
 .bd-empty-state{
-    padding: 28px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 340px;
+    padding: 0 16px;
     text-align: center;
     color: var(--bd-muted);
-    font-size: 12px;
+    font-size: 13px;
 }
 
 .bd-download-item{
@@ -185,86 +321,124 @@ body{
     overflow: hidden;
     display: flex;
     align-items: center;
-    gap: 10px;
-    min-height: 10.4vh;
-    padding: 6px 10px;
-    margin: 3px 6px;
-    border-radius: 8px;
+    gap: 12px;
+    min-height: 60px;
+    padding: 10px 12px;
+    border-radius: 12px;
     cursor: pointer;
+    transition: background-color 0.15s ease;
 }
 
 .bd-download-item[hidden]{
     display: none;
 }
 
-.bd-download-item:hover{
+.bd-download-item:hover,
+.bd-download-item:focus-within{
     background-color: var(--bd-hover);
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
 }
 
 .bd-status-dangerous{
     cursor: default;
 }
 
-.bd-progress-fill{
+/* Newly started/finished since the popup was last opened: a small dot
+   on the tile, no row tint. */
+.bd-item-new .bd-file-tile{
+    position: relative;
+    overflow: visible;
+}
+
+.bd-item-new .bd-file-tile::after{
+    content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    bottom: 0;
+    top: -3px;
+    right: -3px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--bd-accent-fill);
+    box-shadow: 0 0 0 2px var(--bd-bg);
+}
+
+/* Progress: an inset pill track under the meta line; the fill has
+   fully rounded ends and a soft gradient. */
+.bd-progress-track{
+    height: 3px;
+    margin-top: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+    background: var(--bd-border);
+}
+
+.bd-progress-fill{
+    height: 100%;
     width: 0%;
-    background: transparent;
-    transition: width 0.3s ease;
-    z-index: 0;
-    pointer-events: none;
-    border-radius: 8px;
+    min-width: 3px;
+    border-radius: 999px;
+    transition: width 0.6s linear;
 }
 
 .bd-status-downloading .bd-progress-fill{
-    background: var(--bd-progress-downloading);
+    background: var(--bd-accent-fill);
 }
 
 .bd-status-paused .bd-progress-fill{
-    background: var(--bd-progress-paused);
+    background: var(--bd-warn-fill);
 }
 
-.bd-file-icon{
-    position: relative;
-    z-index: 1;
-    width: 16px;
-    height: 16px;
+.bd-file-tile{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
     flex-shrink: 0;
+    border-radius: 9px;
+    overflow: hidden;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    background: var(--bd-hover);
+    color: var(--bd-muted);
 }
 
 .bd-download-info{
-    position: relative;
-    z-index: 1;
     flex: 1;
     min-width: 0;
     display: flex;
-    align-items: center;
-    gap: 6px;
+    flex-direction: column;
+    gap: 1px;
 }
 
 .bd-download-name{
+    font-weight: 550;
+    letter-spacing: -0.005em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    flex-shrink: 1;
-    min-width: 0;
+}
+
+.bd-download-meta{
+    color: var(--bd-muted);
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .bd-download-status{
     flex-shrink: 0;
-    display: inline-block;
-    padding: 1px 6px;
-    border-radius: 999px;
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
-    background: var(--bd-hover);
+    font-size: 12px;
+    font-weight: 500;
     color: var(--bd-muted);
     transition: opacity 0.15s ease;
+}
+
+.bd-status-completed .bd-download-status,
+.bd-status-unknown .bd-download-status{
+    display: none;
 }
 
 .bd-download-item:hover .bd-download-status,
@@ -272,42 +446,32 @@ body{
     opacity: 0;
 }
 
+
 .bd-status-downloading .bd-download-status{
-    background: var(--bd-progress-downloading);
     color: var(--bd-accent);
 }
 
 .bd-status-paused .bd-download-status{
-    background: var(--bd-progress-paused);
     color: var(--bd-warn);
 }
 
 .bd-status-interrupted .bd-download-status,
-.bd-status-missing .bd-download-status{
-    background: rgba(214, 69, 69, 0.12);
-    color: var(--bd-danger);
-}
-
 .bd-status-dangerous .bd-download-status{
-    background: rgba(214, 69, 69, 0.18);
     color: var(--bd-danger);
-    font-weight: 700;
 }
 
+/* ---------- hover actions ---------- */
 .bd-download-actions{
     position: absolute;
-    top: 50%;
-    right: 8px;
-    transform: translateY(-50%);
+    top: 0;
+    right: 0;
+    bottom: 0;
     z-index: 2;
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 4px;
-    padding: 2px 4px;
-    border-radius: 6px;
-    background: var(--bd-bg);
-    box-shadow: -10px 0 10px 6px var(--bd-bg);
+    gap: 2px;
+    padding: 0 8px 0 28px;
+    background: linear-gradient(90deg, transparent, var(--bd-hover) 24px);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
@@ -323,51 +487,104 @@ body{
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 24px;
-    height: 24px;
+    width: 30px;
+    height: 30px;
     padding: 0;
-    border: 1px solid var(--bd-border);
-    border-radius: 4px;
-    background: var(--bd-bg);
-    color: var(--bd-fg);
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--bd-muted);
     cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease;
 }
 
 .bd-action-btn svg{
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     display: block;
 }
 
 .bd-action-btn:hover{
-    background: var(--bd-hover);
+    background: var(--bd-border);
+    color: var(--bd-fg);
 }
 
-.bd-danger-btn{
+.bd-action-btn.bd-copied{
+    color: var(--bd-accent);
+}
+
+.bd-download-item:has(.bd-copied) .bd-download-actions{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.bd-action-btn.bd-confirming{
+    width: auto;
+    gap: 4px;
+    padding: 0 10px 0 8px;
+    border-radius: 15px;
+    background: var(--bd-danger);
+    color: var(--bd-bg);
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.bd-download-item:has(.bd-confirming) .bd-download-actions{
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.bd-removing{
+    opacity: 0;
+    transform: translateX(8px);
+    pointer-events: none;
+    transition: opacity 0.18s ease, transform 0.18s ease;
+}
+
+.bd-danger-btn:hover{
+    background: var(--bd-danger-soft);
     color: var(--bd-danger);
-    border-color: var(--bd-danger);
 }
 
+/* ---------- footer ---------- */
 .bd-popup-footer{
-    padding: 8px 10px;
-    border-top: 1px solid var(--bd-border);
+    flex-shrink: 0;
+    padding: 4px 12px 10px;
 }
 
 .bd-link-btn{
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 6px;
     width: 100%;
-    padding: 8px;
+    height: 36px;
     border: none;
-    border-radius: 8px;
-    background: var(--bd-hover);
-    color: var(--bd-fg);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--bd-accent);
     font-weight: 600;
-    font-size: 12px;
+    font-size: 13px;
     cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.bd-link-btn::after{
+    content: "\2192";
+    transition: transform 0.15s ease;
 }
 
 .bd-link-btn:hover{
-    background: var(--bd-border);
+    background: var(--bd-accent-soft);
+}
+
+.bd-link-btn:hover::after{
+    transform: translateX(3px);
+}
+
+@media (prefers-reduced-motion: reduce){
+    *{
+        transition-duration: 0.01ms !important;
+    }
 }

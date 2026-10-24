@@ -165,6 +165,7 @@ function showNotification(DItem){
                 
 
                 chrome.downloads.getFileIcon(did, {size: 32}, function(url){
+                    void chrome.runtime.lastError; // mark checked; icon is optional
                     setFileIcon(url);
                 });
 
@@ -239,10 +240,14 @@ function createOffscreenDocument(callback){
     if(!_creatingOffscreenDocumentPromise){
         _creatingOffscreenDocumentPromise = chrome.offscreen.createDocument({
             url: 'offscreen.html',
-            reasons: ['AUDIO_PLAYBACK'],
-            justification: 'Play a notification sound when a download finishes.'
+            reasons: ['AUDIO_PLAYBACK', 'MATCH_MEDIA'],
+            justification: 'Play a notification sound when a download finishes, and read the OS color scheme to pick a toolbar icon color.'
         }).catch(function(){
             // Document already exists (race with another trigger); ignore.
+        }).then(function(){
+            // Chrome closes AUDIO_PLAYBACK documents after ~30s of silence;
+            // drop the cached promise so the next call can recreate it.
+            _creatingOffscreenDocumentPromise = null;
         });
     }
     _creatingOffscreenDocumentPromise.then(callback);

@@ -7,7 +7,7 @@
 </head>
 <body>
     <header class="bd-popup-header">
-        <img src="/img/icon-32.png" class="bd-header-icon" alt="">
+        <svg class="bd-header-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5v13M7 10.8l5 5 5-5M3.5 20.5h17" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <span id="popupTitle" class="bd-popup-title"></span>
         <div class="bd-search-wrap">
             <input type="search" id="searchInput" class="bd-search-input" autocomplete="off">
@@ -17,6 +17,7 @@
             </button>
         </div>
     </header>
+    <div id="typeFilter" class="bd-type-filter" role="group" hidden></div>
     <div id="downloadList" class="bd-download-list"></div>
     <div id="emptyState" class="bd-empty-state" hidden></div>
     <footer class="bd-popup-footer">

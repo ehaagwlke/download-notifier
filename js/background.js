@@ -59,12 +59,24 @@ chrome.management.onUninstalled.addListener(function(id){
 chrome.downloads.onCreated.addListener(function(DLItem){
     saftyCheck(DLItem);
     updateBrowserActionIcon();
-    chrome.storage.sync.get('BDIsShowShelf', function(obj){
-        var BDIsShowShelf = obj.BDIsShowShelf;
-        //console.log('on downloads created ', BDIsShowShelf);
-        setShelfVisibility(BDIsShowShelf);
-    });
+    openPopupIfEnabled();
+    applyShelfSetting();
 });
+
+// Chrome's built-in download UI (shelf / bubble) only stays hidden while
+// an extension has set enabled:false in the current browser session, and
+// onInstalled doesn't fire on a normal browser restart — so re-apply the
+// saved setting every time the service worker starts and on browser
+// startup, not just on install and on the first download (too late: the
+// bubble has already opened by then).
+function applyShelfSetting(){
+    chrome.storage.sync.get('BDIsShowShelf', function(obj){
+        setShelfVisibility(obj.BDIsShowShelf);
+    });
+}
+
+applyShelfSetting();
+chrome.runtime.onStartup.addListener(applyShelfSetting);
 
 chrome.storage.onChanged.addListener(function(obj, area){
     if(area === "sync" && obj.hasOwnProperty('BDIsShowShelf')){
@@ -158,3 +170,26 @@ chrome.runtime.onMessage.addListener(function(msg){
         clearUnseenCompletedCount();
     }
 });
+
+// Opens the toolbar popup when a download starts (BDAutoOpenPopup, on
+// unless explicitly turned off). chrome.action.openPopup needs Chrome 127+
+// and an open, focused browser window; failures are expected and ignored.
+function openPopupIfEnabled(){
+    if(!chrome.action || !chrome.action.openPopup){
+        return;
+    }
+
+    chrome.storage.sync.get('BDAutoOpenPopup', function(obj){
+        if(obj.BDAutoOpenPopup === false){
+            return;
+        }
+
+        try{
+            chrome.action.openPopup(function(){
+                void chrome.runtime.lastError;
+            });
+        }catch(e){
+            console.error('openPopup failed:', e.message);
+        }
+    });
+}

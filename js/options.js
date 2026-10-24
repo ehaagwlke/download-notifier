@@ -34,6 +34,15 @@
     $('soundAlertLabel').textContent = i18n('oSoundLabel');
     $('showDownloadShelfLabel').textContent = i18n('oDownloadShelfLabel');
     $('volLabel').textContent = i18n('oVolLabel');
+    $('themeLabel').textContent = i18n('oThemeLabel');
+    $('themeAuto').textContent = i18n('oThemeAuto');
+    $('themeLight').textContent = i18n('oThemeLight');
+    $('themeDark').textContent = i18n('oThemeDark');
+    $('iconStyleLabel').textContent = i18n('oIconStyleLabel');
+    $('iconStyleAuto').textContent = i18n('oIconStyleAuto');
+    $('iconStyleDark').textContent = i18n('oIconStyleDark');
+    $('iconStyleLight').textContent = i18n('oIconStyleLight');
+    $('autoOpenPopupLabel').textContent = i18n('oAutoOpenPopupLabel');
     $('trackLabel').textContent = i18n('oTrackLabel');
     $('volNotes').textContent = i18n('oVolNotes');
 
@@ -45,6 +54,43 @@
         retrieveOptions();
     }
 
+
+    /*==========theme==========*/
+    function applyTheme(theme){
+        if(theme === 'light' || theme === 'dark'){
+            doc.documentElement.setAttribute('data-theme', theme);
+        }else{
+            doc.documentElement.removeAttribute('data-theme');
+        }
+    }
+
+    chrome.storage.sync.get('BDTheme', function(obj){
+        $('themeSelect').value = obj.BDTheme || 'auto';
+        applyTheme(obj.BDTheme);
+    });
+
+    $('themeSelect').addEventListener('change', function(){
+        chrome.storage.sync.set({'BDTheme': this.value});
+        applyTheme(this.value);
+    });
+
+    /*==========toolbar icon style==========*/
+    chrome.storage.sync.get('BDIconStyle', function(obj){
+        $('iconStyleSelect').value = obj.BDIconStyle || 'auto';
+    });
+
+    $('iconStyleSelect').addEventListener('change', function(){
+        chrome.storage.sync.set({'BDIconStyle': this.value});
+    });
+
+    /*==========auto-open popup==========*/
+    chrome.storage.sync.get('BDAutoOpenPopup', function(obj){
+        $('autoOpenPopup').checked = obj.BDAutoOpenPopup !== false;
+    });
+
+    $('autoOpenPopup').addEventListener('change', function(){
+        chrome.storage.sync.set({'BDAutoOpenPopup': this.checked});
+    });
 
     /*==========selection events==========*/
     showShelfNode.addEventListener('change', function(){

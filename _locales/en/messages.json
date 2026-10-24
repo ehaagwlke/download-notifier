@@ -48,7 +48,34 @@
       "message": "Settings"
    },
    "oDownloadShelfLabel": {
-      "message": "Show Chrome's default download shelf"
+      "message": "Show Chrome's default download UI (shelf / bubble)"
+   },
+   "oThemeLabel": {
+      "message": "Theme"
+   },
+   "oThemeAuto": {
+      "message": "Auto (follow system)"
+   },
+   "oThemeLight": {
+      "message": "Light"
+   },
+   "oThemeDark": {
+      "message": "Dark"
+   },
+   "oIconStyleLabel": {
+      "message": "Toolbar icon"
+   },
+   "oIconStyleAuto": {
+      "message": "Auto (follow system)"
+   },
+   "oIconStyleDark": {
+      "message": "Dark icon (for light toolbars)"
+   },
+   "oIconStyleLight": {
+      "message": "Light icon (for dark toolbars)"
+   },
+   "oAutoOpenPopupLabel": {
+      "message": "Open the downloads popup when a download starts"
    },
    "oVolLabel": {
       "message": "Volume"
@@ -65,11 +92,14 @@
    "pPause": { "message": "Pause" },
    "pResume": { "message": "Resume" },
    "pCancel": { "message": "Cancel" },
+   "pCopyLink": { "message": "Copy Download Link" },
+   "pLinkCopied": { "message": "Link copied" },
    "pRetry": { "message": "Retry" },
    "pOpen": { "message": "Open" },
    "pShow": { "message": "Show in Folder" },
    "pRemove": { "message": "Remove from List" },
    "pDeleteFile": { "message": "Delete File" },
+   "pDeleteConfirm": { "message": "Delete file?" },
    "pConfirmDelete": { "message": "Delete this file from your computer? This cannot be undone." },
    "pStateDownloading": { "message": "Downloading" },
    "pStatePaused": { "message": "Paused" },
@@ -82,9 +112,25 @@
    "pSearchPlaceholder": { "message": "Search downloads" },
    "pSearchLabel": { "message": "Search" },
    "pSearchClose": { "message": "Close search" },
+   "pTypeAll": { "message": "All" },
+   "pTypeImages": { "message": "Images" },
+   "pTypeVideo": { "message": "Video" },
+   "pTypeAudio": { "message": "Audio" },
+   "pTypeDocuments": { "message": "Documents" },
+   "pTypeArchives": { "message": "Archives" },
+   "pTypeApps": { "message": "Apps" },
+   "pTypeCode": { "message": "Code" },
+   "pTypeOther": { "message": "Other" },
    "pNoResults": { "message": "No matching downloads" },
    "aDownloadsTooltip": {
       "message": "$COUNT$ downloading — $PERCENT$% complete",
+      "placeholders": {
+         "count": { "content": "$1" },
+         "percent": { "content": "$2" }
+      }
+   },
+   "aDownloadsPausedTooltip": {
+      "message": "$COUNT$ paused — $PERCENT$% complete",
       "placeholders": {
          "count": { "content": "$1" },
          "percent": { "content": "$2" }

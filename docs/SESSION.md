@@ -189,3 +189,189 @@ Fixed directly (skipping another DeepSeek round-trip, per the harness's single-f
 - `js/background.js`: dropped `'progress.js'` from the `importScripts(...)` list.
 
 
+
+## [2026-10-12 00:00] Request
+Finish toolbar icon progress indicator: ring/count appear but never update in (pseudo-)realtime during a download.
+
+## Gate 3 note — micro-fix exception used
+Root cause: `updateBrowserActionIcon()` only ran from `downloads.onChanged`, which does not fire for `bytesReceived` changes, so the ring was only redrawn on state transitions. Fix in `js/download.js` (~20 lines): while ≥1 download is in progress, a 1s `setInterval` re-runs `updateBrowserActionIcon`; stopped when none remain. The per-tick `chrome.downloads.search` call also keeps the MV3 service worker alive. Verified `node --check` only; real-download check is on the user (reload extension, start a large download).
+
+## [2026-10-12 00:00] Request
+Redesign the toolbar icon + count badge (blue "1" badge covered the icon).
+
+## Gate 3 note — direct edit (single file, DeepSeek skipped: design-judgment-heavy)
+`js/download.js`: all toolbar states now procedurally drawn (new `drawIcon`/`drawGlyph`, replaces `drawProgressIcon` and static PNG use). Idle = gray download-arrow-into-tray glyph; downloading = green glyph inside progress ring (empty track if size unknown); unseen completions = blue dot (white halo) top-right of the glyph, count in tooltip only. In-progress badge text shown only when ≥2 downloads (white-on-green via `setBadgeTextColor`). Idle icon drawn on worker startup. Verified `node --check` only; visual check on user.
+
+## [2026-10-12 00:00] Request
+Redesign popup UI (and icon/badge) so it adapts elegantly to auto/light/dark themes.
+
+## Gate 3 note — direct edits (design-judgment-heavy, tightly coupled CSS/JS/HTML; DeepSeek skipped)
+- `style/popup.css` rewritten: semantic tokens, light base + dark via `@media (prefers-color-scheme)` (when not forced light) and `:root[data-theme]`; 56px rows, file-icon tile, 3px bottom progress bar, rounded hover actions, focus-visible rings, reduced-motion.
+- `view/popup.html`: header PNG -> themed inline SVG glyph. `js/popup.js`: applies `BDTheme` (auto/light/dark, storage.sync, live), secondary meta line ("12.4 MB / 80 MB · 15%"), status pill moved right and hidden for completed, 1s in-place live refresh for running rows (onChanged doesn't fire for bytesReceived — popup had the same stale-progress bug as the icon).
+- New `BDTheme` option in options page (select) + dark-aware `options.css`; i18n keys en/zh_CN; shelf label reworded to "download UI (shelf / bubble)".
+- `js/download.js`: icon uses theme-neutral mid-tone colors (toolbar theme isn't detectable in a worker); unseen dot separated by transparent cut-out instead of white halo; badge green darkened for white-text contrast.
+- Verified: node --check on all js, locale JSON valid. Visual check in light/dark is on the user.
+
+## [2026-10-12 00:00] Feedback
+User: popup UI "pretty dull, not elegant" (screenshot: all-gray rows, generic gray Chrome file icons).
+
+## Gate 3 note — direct edits (same rationale as previous round)
+`js/popup.js`: dropped `getFileIcon` PNGs for color-coded extension tiles (`fileTile`, hue per file category). `style/popup.css`: tile colors via `hsl(var(--h) ...)` with theme-driven lightness/alpha tokens; green gradient wash + gradient logo badge in header; larger rows/type; ghost accent footer link with arrow. node --check passes; visual check on user.
+
+## [2026-10-12 00:00] Bug report
+`Unchecked runtime.lastError: Filename not yet determined` from view/popup.html.
+
+## Gate 3 note — micro-fix exception used
+Cause: the old popup called `chrome.downloads.getFileIcon` for in-progress downloads whose filename isn't determined yet, with no `lastError` check. Already eliminated by the previous round (popup now draws extension tiles, no `getFileIcon`). Defensive: the only remaining call (`js/notification.js`, service worker) now reads `chrome.runtime.lastError` in its callback. Reload the extension and use "Clear all" on the errors page to confirm it doesn't recur.
+
+## [2026-10-12 00:00] Request
+Open the popup automatically when a download starts.
+
+## Gate 3 note — direct edits (small, 4 files)
+`js/background.js`: `openPopupIfEnabled()` called from `downloads.onCreated`; uses `chrome.action.openPopup` (Chrome 127+, feature-detected; lastError swallowed since it fails when no focused window). New option `BDAutoOpenPopup` (storage.sync, on unless explicitly false) with checkbox in options page + en/zh_CN label. node --check passes; real-download check on user.
+
+## [2026-10-12 00:00] Request
+(1) Remove/recolor the popup border. (2) Mark newly downloaded items.
+
+## Gate 3 note — direct edits
+(1) No code change: the outline/shadow around an extension popup is drawn by Chrome itself and can't be styled or removed by the extension (our own footer divider was already removed earlier). (2) `js/popup.js`: `BDLastSeenTime` (storage.local) = previous popup-open time; rows whose start/end time is after it get `.bd-item-new`. `style/popup.css`: soft blue tint + blue dot on the tile corner (theme tokens `--bd-new`, `--bd-new-soft`). node --check passes; visual check on user.
+
+## [2026-10-12 00:00] Feedback
+Row progress bar looked like a stray flat line (square-cut ends, flush to row edge, no track).
+
+## Gate 3 note — direct edit
+`js/popup.js`: progress fill now lives in a `.bd-progress-track` inside the info column (only for downloading/paused). `style/popup.css`: 5px pill track (border token) with fully rounded gradient fill (amber when paused), min-width so tiny progress still shows a round cap. node --check passes; visual check on user.
+
+## [2026-10-12 00:00] Bug report
+Chrome's native download bubble pops up abruptly next to the extension popup (screenshot) even with "show default download UI" unchecked.
+
+## Gate 3 note — direct edit
+Root cause: `setShelfVisibility(false)` (-> `downloads.setUiOptions({enabled:false})`) was only called on install/update, on option change, and inside `downloads.onCreated` after an async storage read — i.e. never at browser start, and too late on the first download, so Chrome's bubble had already opened. Fix in `js/background.js`: `applyShelfSetting()` now runs at every service-worker start and on `runtime.onStartup`, besides onCreated. node --check passes; verify by restarting Chrome and starting a download.
+
+## [2026-10-12 00:00] Bug report
+Progress bar showed an old flat green line at the row bottom plus an empty new track (screenshot).
+
+## Gate 3 note — micro-fix
+Cause: my earlier CSS splice (progress redesign) matched the wrong anchor and left a duplicate tail of the `.bd-item-new` rules plus the old absolutely-positioned `.bd-progress-fill` block after the new one; the old rule won the cascade, pulling the fill out of the track. Removed the duplicate block from `style/popup.css`.
+
+## [2026-10-12 00:00] Request
+Fix double-delete: trash only deleted the file (row lingered as "File Missing"), circle-minus then removed the record.
+
+## Gate 3 note — direct edits (popup.js, popup.css, 2 locale files)
+Trash now: inline 2-step confirm (first click -> red "Delete file?" pill, auto-reverts after 3s; replaces `window.confirm`), then `removeFile` + `erase` + row removal in one action (erase only on removeFile success). Circle-minus stays "remove from list" (immediate). Rows fade out on removal (`.bd-removing`). New i18n key `pDeleteConfirm` (en/zh_CN). node --check + JSON valid; interaction check on user.
+
+## [2026-10-24 00:00] Request
+Redesign the toolbar icon so it matches both light and dark themes.
+
+## Gate 3 note — direct edits (small, design-judgment-heavy; DeepSeek skipped)
+Previous icon used one mid-tone palette for both toolbars. Now: `js/offscreen.js` reports `prefers-color-scheme` (matchMedia, live on change) to the worker; `js/download.js` caches it (`BDIconScheme`, storage.local), picks a light/dark palette (dark glyph on light toolbar, light glyph + brighter green/blue on dark) and redraws on change. `js/notification.js`: offscreen doc reasons += `MATCH_MEDIA`; fixed stale cached create-promise so the doc is recreated after Chrome auto-closes it. node --check passes. Caveat: follows the browser/OS scheme; a custom Chrome theme with a mismatched toolbar can't be detected. Visual check on user.
+
+## [2026-10-24 00:00] Request
+Redesign the static PNG icons (img/icon-*.png) to match the new glyph.
+
+## Gate 3 note — direct edit (generated assets; DeepSeek skipped)
+Regenerated `img/icon-{16,19,32,48,64,128}.png` with a throwaway PIL script (8x supersampled): rounded-square tile, green gradient (#34d399 -> #0a8a4a, same as the popup logo badge), white download-arrow glyph (same geometry as `drawGlyph`). Self-contained tile reads on light and dark backgrounds, so one set serves both. Viewed 128 and 16 px renders. Not touched: file/folder/action PNGs (pause, play, etc.).
+
+## [2026-10-24 00:00] Feedback
+User screenshot: toolbar icon is dim gray and barely visible on a dark Chrome theme.
+
+## Gate 3 note — direct edits (supersedes the color-scheme detection above)
+Cause: the offscreen `matchMedia` reports the OS scheme, not Chrome's theme, so a dark Chrome theme on a light OS got the light-toolbar palette. Detection removed (`js/offscreen.js` and the `MATCH_MEDIA` reason reverted; stale-promise fix in `js/notification.js` kept). `js/download.js`: toolbar icon is now the same green gradient rounded tile + white glyph as `img/icon-*.png`, visible on any toolbar. Downloading = tile dimmed and filled solid from the bottom up to the progress %; unknown size = full tile; unseen = blue dot with transparent cut-out. node --check passes; visual check on user.
+
+## [2026-10-24 00:00] Feedback
+User: remove the highlight background and gradient (want a flat icon); bring the progress ring back.
+
+## Gate 3 note — direct edits
+`js/download.js`: tile/gradient removed. Idle = flat green (#12B76A) glyph, thicker stroke; downloading = progress ring (gray track + green arc) around a smaller glyph; unseen = blue dot with cut-out. `img/icon-*.png` regenerated as the same flat green glyph on transparent (scratchpad gen script). node --check passes; toolbar visual check on user.
+
+## [2026-10-24 00:00] Request
+Show a paused state on the toolbar icon.
+
+## Gate 3 note — direct edits
+`js/download.js`: when every in-progress download is `paused`, the icon switches to amber ring (progress arc kept) + two-bar pause glyph, badge amber (#B45309), tooltip "N paused — P% complete" (new `aDownloadsPausedTooltip`, en + zh_CN). Any running download keeps the normal green look. The 1s poll picks up pause/resume. node --check + JSON valid; visual check on user.
+
+## [2026-10-24 00:00] Request
+Badge with the downloading count must show whenever ≥1 item is downloading.
+
+## Gate 3 note — micro-fix
+`js/download.js`: removed the "only when ≥2" condition; badge text is always the in-progress count (green, amber when all paused). Reverses the earlier decision to hide a lone "1". node --check passes.
+
+## [2026-10-24 00:00] Feedback
+User screenshot: with the count badge covering the glyph, the static ring doesn't show whether the download is still working.
+
+## Gate 3 note — direct edit
+`js/download.js`: poll 1s -> 500ms; each tick advances `bdFrame`. Running: arrow bobs down/up in a 4-frame loop (2s). Unknown size: a 60% green arc spins instead of an empty track. Paused: frozen amber pause glyph (no motion). Glyph in ring enlarged 0.46 -> 0.5. node --check passes; visual check on user.
+
+## [2026-10-24 00:00] Request
+Add a copy-download-link action so a download can be redone from its source URL even after the file is removed.
+
+## Gate 3 note — direct edits (popup.js, popup.css, 2 locale files)
+New hover action `copyLink` (chain-link icon) on every row except "dangerous"; copies `finalUrl || url` via `navigator.clipboard.writeText` (user gesture, no extra permission), then flashes a green check for 1.5s. New i18n `pCopyLink`, `pLinkCopied` (en/zh_CN); `.bd-copied` style keeps the actions visible during the flash. Limit: "remove from list" / trash erase the history entry, so the link must be copied before that. node --check + JSON valid; interaction check on user.
+
+## [2026-10-24 00:00] Request
+Add a file-type filter to the popup; only offer types that have at least one history record (even if the file was deleted).
+
+## Gate 3 note — direct edits (popup.js, popup.html, popup.css, 2 locale files)
+Replaced `TILE_HUES` with `FILE_CATEGORIES` (apps/archives/documents/images/video/audio/code + other; same hues, shared by tile colors and the filter). Rows carry `data-type`. New `#typeFilter` chip row under the header, built from rows present in the DOM (so "File Missing" rows count), with per-type counts; hidden when fewer than 2 types exist; falls back to "All" when the active type disappears; combines with the text search; wheel scrolls it sideways. i18n `pType*` (en/zh_CN). Scope limit: the popup loads the latest 50 records, so chips reflect those 50. node --check + JSON valid; visual check on user.
+
+## [2026-10-24 00:00] Bug report
+Screenshot: file-type chip row squashed and clipped under the header.
+
+## Gate 3 note — micro-fix
+Cause: `body` is a max-height flex column, and the chip row (overflow-x:auto → min-height 0) was the flex item that shrank. Fix in `style/popup.css`: `flex-shrink:0` on header, chip row and footer; `min-height:0` on the list so it alone absorbs the squeeze.
+
+## [2026-10-24 00:00] Feedback
+Popup header still showed the old gradient tile logo.
+
+## Gate 3 note — micro-fix
+`style/popup.css` / `view/popup.html`: header logo is now the flat green (#12b76a) glyph, no tile/gradient/shadow, same geometry and heavier stroke as the toolbar icon.
+
+## [2026-10-24 00:00] Bug report
+Popup height jumped while filtering by file type.
+
+## Gate 3 note — micro-fix
+`style/popup.css`: list is a fixed 340px (was max-height 380px); the empty/no-results state is also 340px and centered, and `toggleEmptyState` (popup.js) hides the list when nothing matches, so the popup keeps the same height for any filter/search. Only the chip row appearing/disappearing (<2 types) still changes the height by ~34px.
+
+## [2026-10-24 00:00] Request
+Make the popup less colorful and more content-focused.
+
+## Gate 3 note — direct edits (popup.css, popup.js)
+Monochrome UI with green as the single accent: header wash removed and logo in foreground color; file tiles neutral gray (hue-per-category removed from `FILE_CATEGORIES`/`fileTile`); status pills become plain text (green downloading, amber paused, red only for interrupted/dangerous; "File Missing" now muted); "new" row tint removed (small accent dot kept); progress bar 3px solid green (no gradient); type chips borderless, active chip = inverted foreground/background. node --check passes; visual check on user.
+
+## [2026-10-24 00:00] Request
+Examine the whole project and make everything visually consistent.
+
+## Gate 3 note — direct edits (design-judgment-heavy; assets generated with a scratchpad PIL script)
+Audit: popup was already on the new system; options page still used the old gray `.wrapper`/`#EFEFEF` styling and unstyled controls; notification button icons and the options play/stop buttons were old-style 256px PNGs; popup action icons mixed filled and stroked shapes.
+- `view/options.html` + `style/options.css`: rebuilt on the popup's tokens/font (same light/dark values, green accent), row layout with dividers, styled selects, accent-colored checkbox/range, 28px round play/stop button; script tags moved inside `<body>`; all element ids unchanged so `js/options.js` is untouched.
+- `img/play.png`, `img/stop.png` (flat green), `img/file-icon.png`, `img/folder-icon.png` (flat gray outline, notification buttons) regenerated.
+- `js/popup.js`: all action icons now one outline set (24px grid, 1.8 stroke, round caps/joins).
+Not touched: unused legacy PNGs (pause/start/remove/retry/reveal) and the README/Store screenshots, which still show the old UI. node --check passes; visual check on user.
+
+## [2026-10-24 00:00] Feedback
+Main extension icon still green (should follow the less-colorful direction).
+
+## Gate 3 note — direct edits
+`js/download.js`: toolbar glyph/ring now neutral mid-gray #8A9097 (ring track same gray at 35%); color only for state — amber paused, green unseen dot; count badge neutral #5F6368 (amber when all paused). `img/icon-*.png` regenerated in the same gray. Trade-off: mid-gray is the only neutral readable on both light and dark toolbars without theme detection (which proved unreliable), so contrast is moderate (~3:1) on either.
+
+## [2026-10-24 00:00] Request
+Black main icon with light-theme variant; auto-detect + manual override (agreed option 1).
+
+## Gate 3 note — direct edits
+- `js/download.js`: palettes `darkIcon` (#1D1F23, amber #D97706) / `lightIcon` (#F1F3F4, amber #FBBF24); choice = `BDIconStyle` (sync: auto|dark|light) with auto following the OS scheme cached in `BDOsScheme` (storage.local). Reacts live to option changes. Startup via `loadIconSettings()`.
+- `js/offscreen.js`: reports `prefers-color-scheme` (on load, on change, on query); `js/notification.js`: offscreen reasons += `MATCH_MEDIA`.
+- Options: new "Toolbar icon" select (Auto / Dark icon / Light icon) + en/zh_CN strings.
+- `img/icon-*.png` regenerated black (#1d1f23), matching the popup logo; they stay dark on dark surfaces (e.g. dark chrome://extensions) by design.
+node --check + JSON valid; visual check on user. Set the option manually if the Chrome theme and OS scheme differ.
+
+## [2026-10-24 00:00] Feedback
+Black static icon is invisible on dark surfaces (dark chrome://extensions, dark toolbar before the drawn icon loads).
+
+## Gate 3 note — asset regen
+`img/icon-*.png` back to mid-gray #8A9097 (static assets can't adapt to the surface). The drawn toolbar icon stays adaptive (black/near-white via auto + "Toolbar icon" override). With a dark Chrome theme on a light OS, set Toolbar icon = "Light icon".
+
+## [2026-10-24 00:00] Feedback
+Options screenshot: Track/Volume controls and the Theme/Toolbar icon selects didn't line up (different label offsets and select widths). Toolbar icon still on Auto.
+
+## Gate 3 note — micro-fix
+`style/options.css`: labels fixed at 140px (114px inside the 26px-indented sound block), selects all 240px, so every control starts at the same x.

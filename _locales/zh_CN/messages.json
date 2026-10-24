@@ -48,7 +48,34 @@
       "message": "设置"
    },
    "oDownloadShelfLabel": {
-      "message": "显示谷歌浏览器的默认下载工具条"
+      "message": "显示谷歌浏览器的默认下载界面（工具条/气泡）"
+   },
+   "oThemeLabel": {
+      "message": "主题"
+   },
+   "oThemeAuto": {
+      "message": "自动（跟随系统）"
+   },
+   "oThemeLight": {
+      "message": "浅色"
+   },
+   "oThemeDark": {
+      "message": "深色"
+   },
+   "oIconStyleLabel": {
+      "message": "工具栏图标"
+   },
+   "oIconStyleAuto": {
+      "message": "自动（跟随系统）"
+   },
+   "oIconStyleDark": {
+      "message": "深色图标（适用于浅色工具栏）"
+   },
+   "oIconStyleLight": {
+      "message": "浅色图标（适用于深色工具栏）"
+   },
+   "oAutoOpenPopupLabel": {
+      "message": "开始下载时自动打开下载列表弹窗"
    },
    "oVolLabel": {
       "message": "音量"
@@ -65,11 +92,14 @@
    "pPause": { "message": "暂停" },
    "pResume": { "message": "继续" },
    "pCancel": { "message": "取消" },
+   "pCopyLink": { "message": "复制下载链接" },
+   "pLinkCopied": { "message": "链接已复制" },
    "pRetry": { "message": "重试" },
    "pOpen": { "message": "打开" },
    "pShow": { "message": "在文件夹中显示" },
    "pRemove": { "message": "从列表中移除" },
    "pDeleteFile": { "message": "删除文件" },
+   "pDeleteConfirm": { "message": "删除文件？" },
    "pConfirmDelete": { "message": "确定要从电脑中删除此文件吗？此操作无法撤销。" },
    "pStateDownloading": { "message": "正在下载" },
    "pStatePaused": { "message": "已暂停" },
@@ -82,9 +112,25 @@
    "pSearchPlaceholder": { "message": "搜索下载记录" },
    "pSearchLabel": { "message": "搜索" },
    "pSearchClose": { "message": "关闭搜索" },
+   "pTypeAll": { "message": "全部" },
+   "pTypeImages": { "message": "图片" },
+   "pTypeVideo": { "message": "视频" },
+   "pTypeAudio": { "message": "音频" },
+   "pTypeDocuments": { "message": "文档" },
+   "pTypeArchives": { "message": "压缩包" },
+   "pTypeApps": { "message": "应用" },
+   "pTypeCode": { "message": "代码" },
+   "pTypeOther": { "message": "其他" },
    "pNoResults": { "message": "未找到匹配的下载记录" },
    "aDownloadsTooltip": {
       "message": "$COUNT$ 个下载中 — 已完成 $PERCENT$%",
+      "placeholders": {
+         "count": { "content": "$1" },
+         "percent": { "content": "$2" }
+      }
+   },
+   "aDownloadsPausedTooltip": {
+      "message": "$COUNT$ 个已暂停 — 已完成 $PERCENT$%",
       "placeholders": {
          "count": { "content": "$1" },
          "percent": { "content": "$2" }
