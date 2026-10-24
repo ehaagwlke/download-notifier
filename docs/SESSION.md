@@ -387,3 +387,19 @@ Retry icon not well-drawn (arrowhead cramped inside the circle).
 
 ## Gate 3 note — micro-fix
 `style/popup.css`: `.bd-link-btn` now foreground text with a neutral `--bd-hover` background on hover. Remaining green in the popup is status-only (downloading text/progress bar, new-item dot).
+
+## [2026-10-24 00:00] Request
+Polish which popup actions close the popup (agreed split).
+
+## Gate 3 note — micro-fix
+`js/popup.js` `handleAction`: `open` and `show` now call `window.close()` after dispatching (they hand focus to another app; row click on a completed item shares this path). Pause/resume/cancel/keep/retry/copy link/remove/delete keep the popup open. node --check passes; interaction check on user.
+
+## [2026-10-24 00:00] CLOSE
+Accepted by user; final commit + push. Session summary: toolbar icon redesigned (flat glyph, progress ring with animated arrow, paused amber state, always-on count badge, adaptive dark/light via the "Toolbar icon" option with OS auto-detect); popup made monochrome/content-first with file-type chips, copy-link action, fixed list height, unified outline icons, and Open/Show closing the popup; options page rebuilt on the popup's tokens; static icons regenerated.
+
+Open items / handoff:
+- Not explicitly confirmed by the user in Chrome: copy-link tooltip, Open/Show closing the popup, Light icon override on a dark toolbar.
+- Static `img/icon-*.png` are mid-gray (can't adapt to the surface); with a dark Chrome theme on a light OS, set Toolbar icon = "Light icon".
+- Popup loads only the latest 50 records, so type chips reflect those 50; the filter isn't on the full downloads page.
+- Unused legacy PNGs (pause/start/remove/retry/reveal) and README/Store screenshots (old UI) are stale.
+- Untracked, deliberately not committed: `.DS_Store`, `download-notifier-v006.zip`.

@@ -534,11 +534,15 @@
             case 'keep':
                 chrome.downloads.acceptDanger(id, function(){});
                 break;
+            // Open/Show hand focus to another app, so the popup closes;
+            // every other action manages the list and keeps it open.
             case 'open':
                 chrome.downloads.open(id);
+                window.close();
                 break;
             case 'show':
                 chrome.downloads.show(id);
+                window.close();
                 break;
             case 'retry':
                 chrome.downloads.search({id: id}, function(arr){
