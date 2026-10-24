@@ -375,3 +375,15 @@ Options screenshot: Track/Volume controls and the Theme/Toolbar icon selects did
 
 ## Gate 3 note — micro-fix
 `style/options.css`: labels fixed at 140px (114px inside the 26px-indented sound block), selects all 240px, so every control starts at the same x.
+
+## [2026-10-24 00:00] Feedback
+Retry icon not well-drawn (arrowhead cramped inside the circle).
+
+## Gate 3 note — micro-fix
+`js/popup.js`: retry icon replaced with a standard rotate-cw glyph (open ~300° arc ending in an outward arrowhead, same 24px grid/1.8 stroke as the other action icons). node --check passes; visual check on user.
+
+## [2026-10-24 00:00] Feedback
+"View All Downloads" footer button was green (text + hover background), off-palette.
+
+## Gate 3 note — micro-fix
+`style/popup.css`: `.bd-link-btn` now foreground text with a neutral `--bd-hover` background on hover. Remaining green in the popup is status-only (downloading text/progress bar, new-item dot).

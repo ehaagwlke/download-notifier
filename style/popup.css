@@ -563,7 +563,7 @@ button{
     border: none;
     border-radius: 10px;
     background: transparent;
-    color: var(--bd-accent);
+    color: var(--bd-fg);
     font-weight: 600;
     font-size: 13px;
     cursor: pointer;
@@ -576,7 +576,7 @@ button{
 }
 
 .bd-link-btn:hover{
-    background: var(--bd-accent-soft);
+    background: var(--bd-hover);
 }
 
 .bd-link-btn:hover::after{
